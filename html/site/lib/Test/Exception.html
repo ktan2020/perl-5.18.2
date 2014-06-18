@@ -1,0 +1,349 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Test::Exception - Test exception based code</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body id="_podtop_" style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;Test::Exception - Test exception based code</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#SKIPPING-TEST::EXCEPTION-TESTS">SKIPPING TEST::EXCEPTION TESTS</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#COMMUNITY">COMMUNITY</a></li>
+  <li><a href="#TO-DO">TO DO</a></li>
+  <li><a href="#ACKNOWLEDGMENTS">ACKNOWLEDGMENTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#LICENCE">LICENCE</a></li>
+</ul>
+
+<a href="#_podtop_"><h1 id="NAME">NAME</h1></a>
+
+<p>Test::Exception - Test exception based code</p>
+
+<a href="#_podtop_"><h1 id="SYNOPSIS">SYNOPSIS</h1></a>
+
+<pre><code>  use Test::More tests =&gt; 5;
+  use Test::Exception;
+
+  # or if you don&#39;t need Test::More
+
+  use Test::Exception tests =&gt; 5;
+
+  # then...
+
+  # Check that the stringified exception matches given regex
+  throws_ok { $foo-&gt;method } qr/division by zero/, &#39;zero caught okay&#39;;
+
+  # Check an exception of the given class (or subclass) is thrown
+  throws_ok { $foo-&gt;method } &#39;Error::Simple&#39;, &#39;simple error thrown&#39;;
+  
+  # all Test::Exceptions subroutines are guaranteed to preserve the state 
+  # of $@ so you can do things like this after throws_ok and dies_ok
+  like $@, &#39;what the stringified exception should look like&#39;;
+
+  # Check that something died - we do not care why
+  dies_ok { $foo-&gt;method } &#39;expecting to die&#39;;
+
+  # Check that something did not die
+  lives_ok { $foo-&gt;method } &#39;expecting to live&#39;;
+
+  # Check that a test runs without an exception
+  lives_and { is $foo-&gt;method, 42 } &#39;method is 42&#39;;
+  
+  # or if you don&#39;t like prototyped functions
+  
+  throws_ok( sub { $foo-&gt;method }, qr/division by zero/,
+      &#39;zero caught okay&#39; );
+  throws_ok( sub { $foo-&gt;method }, &#39;Error::Simple&#39;, 
+      &#39;simple error thrown&#39; );
+  dies_ok( sub { $foo-&gt;method }, &#39;expecting to die&#39; );
+  lives_ok( sub { $foo-&gt;method }, &#39;expecting to live&#39; );
+  lives_and( sub { is $foo-&gt;method, 42 }, &#39;method is 42&#39; );</code></pre>
+
+<a href="#_podtop_"><h1 id="DESCRIPTION">DESCRIPTION</h1></a>
+
+<p>This module provides a few convenience methods for testing exception based code. It is built with <a href="../../../lib/Test/Builder.html">Test::Builder</a> and plays happily with <a href="../../../lib/Test/More.html">Test::More</a> and friends.</p>
+
+<p>If you are not already familiar with <a href="../../../lib/Test/More.html">Test::More</a> now would be the time to go take a look.</p>
+
+<p>You can specify the test plan when you <code>use Test::Exception</code> in the same way as <code>use Test::More</code>. See <a href="../../../lib/Test/More.html">Test::More</a> for details.</p>
+
+<p>NOTE: Test::Exception only checks for exceptions. It will ignore other methods of stopping program execution - including exit(). If you have an exit() in evalled code Test::Exception will not catch this with any of its testing functions.</p>
+
+<dl>
+
+<dt id="throws_ok"><b>throws_ok</b></dt>
+<dd>
+
+<p>Tests to see that a specific exception is thrown. throws_ok() has two forms:</p>
+
+<pre><code>  throws_ok BLOCK REGEX, TEST_DESCRIPTION
+  throws_ok BLOCK CLASS, TEST_DESCRIPTION</code></pre>
+
+<p>In the first form the test passes if the stringified exception matches the give regular expression. For example:</p>
+
+<pre><code>    throws_ok { read_file( &#39;unreadable&#39; ) } qr/No file/, &#39;no file&#39;;</code></pre>
+
+<p>If your perl does not support <code>qr//</code> you can also pass a regex-like string, for example:</p>
+
+<pre><code>    throws_ok { read_file( &#39;unreadable&#39; ) } &#39;/No file/&#39;, &#39;no file&#39;;</code></pre>
+
+<p>The second form of throws_ok() test passes if the exception is of the same class as the one supplied, or a subclass of that class. For example:</p>
+
+<pre><code>    throws_ok { $foo-&gt;bar } &quot;Error::Simple&quot;, &#39;simple error&#39;;</code></pre>
+
+<p>Will only pass if the <code>bar</code> method throws an Error::Simple exception, or a subclass of an Error::Simple exception.</p>
+
+<p>You can get the same effect by passing an instance of the exception you want to look for. The following is equivalent to the previous example:</p>
+
+<pre><code>    my $SIMPLE = Error::Simple-&gt;new;
+    throws_ok { $foo-&gt;bar } $SIMPLE, &#39;simple error&#39;;</code></pre>
+
+<p>Should a throws_ok() test fail it produces appropriate diagnostic messages. For example:</p>
+
+<pre><code>    not ok 3 - simple error
+    #     Failed test (test.t at line 48)
+    # expecting: Error::Simple exception
+    # found: normal exit</code></pre>
+
+<p>Like all other Test::Exception functions you can avoid prototypes by passing a subroutine explicitly:</p>
+
+<pre><code>    throws_ok( sub {$foo-&gt;bar}, &quot;Error::Simple&quot;, &#39;simple error&#39; );</code></pre>
+
+<p>A true value is returned if the test succeeds, false otherwise. On exit $@ is guaranteed to be the cause of death (if any).</p>
+
+<p>A description of the exception being checked is used if no optional test description is passed.</p>
+
+<p>NOTE: Rememeber when you <code>die $string_without_a_trailing_newline</code> perl will automatically add the current script line number, input line number and a newline. This will form part of the string that throws_ok regular expressions match against.</p>
+
+</dd>
+<dt id="dies_ok"><b>dies_ok</b></dt>
+<dd>
+
+<p>Checks that a piece of code dies, rather than returning normally. For example:</p>
+
+<pre><code>    sub div {
+        my ( $a, $b ) = @_;
+        return $a / $b;
+    };
+
+    dies_ok { div( 1, 0 ) } &#39;divide by zero detected&#39;;
+
+    # or if you don&#39;t like prototypes
+    dies_ok( sub { div( 1, 0 ) }, &#39;divide by zero detected&#39; );</code></pre>
+
+<p>A true value is returned if the test succeeds, false otherwise. On exit $@ is guaranteed to be the cause of death (if any).</p>
+
+<p>Remember: This test will pass if the code dies for any reason. If you care about the reason it might be more sensible to write a more specific test using throws_ok().</p>
+
+<p>The test description is optional, but recommended.</p>
+
+</dd>
+<dt id="lives_ok"><b>lives_ok</b></dt>
+<dd>
+
+<p>Checks that a piece of code doesn&#39;t die. This allows your test script to continue, rather than aborting if you get an unexpected exception. For example:</p>
+
+<pre><code>    sub read_file {
+        my $file = shift;
+        local $/;
+        open my $fh, &#39;&lt;&#39;, $file or die &quot;open failed ($!)\n&quot;;
+        $file = &lt;FILE&gt;;
+        return $file;
+    };
+
+    my $file;
+    lives_ok { $file = read_file(&#39;test.txt&#39;) } &#39;file read&#39;;
+
+    # or if you don&#39;t like prototypes
+    lives_ok( sub { $file = read_file(&#39;test.txt&#39;) }, &#39;file read&#39; );</code></pre>
+
+<p>Should a lives_ok() test fail it produces appropriate diagnostic messages. For example:</p>
+
+<pre><code>    not ok 1 - file read
+    #     Failed test (test.t at line 15)
+    # died: open failed (No such file or directory)</code></pre>
+
+<p>A true value is returned if the test succeeds, false otherwise. On exit $@ is guaranteed to be the cause of death (if any).</p>
+
+<p>The test description is optional, but recommended.</p>
+
+</dd>
+<dt id="lives_and"><b>lives_and</b></dt>
+<dd>
+
+<p>Run a test that may throw an exception. For example, instead of doing:</p>
+
+<pre><code>  my $file;
+  lives_ok { $file = read_file(&#39;answer.txt&#39;) } &#39;read_file worked&#39;;
+  is $file, &quot;42&quot;, &#39;answer was 42&#39;;</code></pre>
+
+<p>You can use lives_and() like this:</p>
+
+<pre><code>  lives_and { is read_file(&#39;answer.txt&#39;), &quot;42&quot; } &#39;answer is 42&#39;;
+  # or if you don&#39;t like prototypes
+  lives_and(sub {is read_file(&#39;answer.txt&#39;), &quot;42&quot;}, &#39;answer is 42&#39;);</code></pre>
+
+<p>Which is the same as doing</p>
+
+<pre><code>  is read_file(&#39;answer.txt&#39;), &quot;42\n&quot;, &#39;answer is 42&#39;;</code></pre>
+
+<p>unless <code>read_file(&#39;answer.txt&#39;)</code> dies, in which case you get the same kind of error as lives_ok()</p>
+
+<pre><code>  not ok 1 - answer is 42
+  #     Failed test (test.t at line 15)
+  # died: open failed (No such file or directory)</code></pre>
+
+<p>A true value is returned if the test succeeds, false otherwise. On exit $@ is guaranteed to be the cause of death (if any).</p>
+
+<p>The test description is optional, but recommended.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="SKIPPING-TEST::EXCEPTION-TESTS">SKIPPING TEST::EXCEPTION TESTS</h1></a>
+
+<p>Sometimes we want to use Test::Exception tests in a test suite, but don&#39;t want to force the user to have Test::Exception installed. One way to do this is to skip the tests if Test::Exception is absent. You can do this with code something like this:</p>
+
+<pre><code>  use strict;
+  use warnings;
+  use Test::More;
+  
+  BEGIN {
+      eval &quot;use Test::Exception&quot;;
+      plan skip_all =&gt; &quot;Test::Exception needed&quot; if $@;
+  }
+  
+  plan tests =&gt; 2;
+  # ... tests that need Test::Exception ...</code></pre>
+
+<p>Note that we load Test::Exception in a <code>BEGIN</code> block ensuring that the subroutine prototypes are in place before the rest of the test script is compiled.</p>
+
+<a href="#_podtop_"><h1 id="BUGS">BUGS</h1></a>
+
+<p>There are some edge cases in Perl&#39;s exception handling where Test::Exception will miss exceptions thrown in DESTROY blocks. See the RT bug <a href="http://rt.cpan.org/Ticket/Display.html?id=24678">http://rt.cpan.org/Ticket/Display.html?id=24678</a> for details, along with the t/edge-cases.t in the distribution test suite. These will be addressed in a future Test::Exception release.</p>
+
+<p>If you find any more bugs please let me know by e-mail, or report the problem with <a href="http://rt.cpan.org/">http://rt.cpan.org/</a>.</p>
+
+<a href="#_podtop_"><h1 id="COMMUNITY">COMMUNITY</h1></a>
+
+<dl>
+
+<dt id="perl-qa">perl-qa</dt>
+<dd>
+
+<p>If you are interested in testing using Perl I recommend you visit <a href="http://qa.perl.org/">http://qa.perl.org/</a> and join the excellent perl-qa mailing list. See <a href="http://lists.perl.org/showlist.cgi?name=perl-qa">http://lists.perl.org/showlist.cgi?name=perl-qa</a> for details on how to subscribe.</p>
+
+</dd>
+<dt id="perlmonks">perlmonks</dt>
+<dd>
+
+<p>You can find users of Test::Exception, including the module author, on <a href="http://www.perlmonks.org/">http://www.perlmonks.org/</a>. Feel free to ask questions on Test::Exception there.</p>
+
+</dd>
+<dt id="CPAN::Forum">CPAN::Forum</dt>
+<dd>
+
+<p>The CPAN Forum is a web forum for discussing Perl&#39;s CPAN modules. The Test::Exception forum can be found at <a href="http://www.cpanforum.com/dist/Test-Exception">http://www.cpanforum.com/dist/Test-Exception</a>.</p>
+
+</dd>
+<dt id="AnnoCPAN">AnnoCPAN</dt>
+<dd>
+
+<p>AnnoCPAN is a web site that allows community annotations of Perl module documentation. The Test::Exception annotations can be found at <a href="http://annocpan.org/~ADIE/Test-Exception/">http://annocpan.org/~ADIE/Test-Exception/</a>.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="TO-DO">TO DO</h1></a>
+
+<p>If you think this module should do something that it doesn&#39;t (or does something that it shouldn&#39;t) please let me know.</p>
+
+<p>You can see my current to do list at <a href="http://adrianh.tadalist.com/lists/public/15421">http://adrianh.tadalist.com/lists/public/15421</a>, with an RSS feed of changes at <a href="http://adrianh.tadalist.com/lists/feed_public/15421">http://adrianh.tadalist.com/lists/feed_public/15421</a>.</p>
+
+<a href="#_podtop_"><h1 id="ACKNOWLEDGMENTS">ACKNOWLEDGMENTS</h1></a>
+
+<p>Thanks to chromatic and Michael G Schwern for the excellent Test::Builder, without which this module wouldn&#39;t be possible.</p>
+
+<p>Thanks to Adam Kennedy, Andy Lester, Aristotle Pagaltzis, Ben Prew, Cees Hek, Chris Dolan, chromatic, Curt Sampson, David Cantrell, David Golden, David Tulloh, David Wheeler, J. K. O&#39;Brien, Janek Schleicher, Jim Keenan, Jos I. Boumans, Joshua ben Jore, Jost Krieger, Mark Fowler, Michael G Schwern, Nadim Khemir, Paul McCann, Perrin Harkins, Peter Rabbitson, Peter Scott, Ricardo Signes, Rob Muhlestein, Scott R. Godin, Steve Purkis, Steve, Tim Bunce, and various anonymous folk for comments, suggestions, bug reports and patches.</p>
+
+<a href="#_podtop_"><h1 id="AUTHOR">AUTHOR</h1></a>
+
+<p>Adrian Howard &lt;adrianh@quietstars.com&gt;</p>
+
+<p>If you can spare the time, please drop me a line if you find this module useful.</p>
+
+<a href="#_podtop_"><h1 id="SEE-ALSO">SEE ALSO</h1></a>
+
+<dl>
+
+<dt id="http:-del.icio.us-tag-Test::Exception"><a href="http://del.icio.us/tag/Test::Exception">http://del.icio.us/tag/Test::Exception</a></dt>
+<dd>
+
+<p>Delicious links on Test::Exception.</p>
+
+</dd>
+<dt id="Test::Warn-Test::NoWarnings"><a>Test::Warn</a> &amp; <a>Test::NoWarnings</a></dt>
+<dd>
+
+<p>Modules to help test warnings.</p>
+
+</dd>
+<dt id="Test::Builder"><a href="../../../lib/Test/Builder.html">Test::Builder</a></dt>
+<dd>
+
+<p>Support module for building test libraries.</p>
+
+</dd>
+<dt id="Test::Simple-Test::More"><a href="../../../lib/Test/Simple.html">Test::Simple</a> &amp; <a href="../../../lib/Test/More.html">Test::More</a></dt>
+<dd>
+
+<p>Basic utilities for writing tests.</p>
+
+</dd>
+<dt id="http:-qa.perl.org-test-modules.html"><a href="http://qa.perl.org/test-modules.html">http://qa.perl.org/test-modules.html</a></dt>
+<dd>
+
+<p>Overview of some of the many testing modules available on CPAN.</p>
+
+</dd>
+<dt id="http:-del.icio.us-tag-perl-testing"><a href="http://del.icio.us/tag/perl+testing">http://del.icio.us/tag/perl+testing</a></dt>
+<dd>
+
+<p>Delicious links on perl testing.</p>
+
+</dd>
+</dl>
+
+<a href="#_podtop_"><h1 id="LICENCE">LICENCE</h1></a>
+
+<p>Copyright 2002-2007 Adrian Howard, All Rights Reserved.</p>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;Test::Exception - Test exception based code</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,199 @@
+<?xml version="1.0" ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<!-- saved from url=(0017)http://localhost/ -->
+<title>Alien::SDL - building, finding and using SDL binaries</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body id="_podtop_" style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;Alien::SDL - building, finding and using SDL binaries</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#VERSION">VERSION</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#config">config()</a></li>
+      <li><a href="#check_header">check_header()</a></li>
+      <li><a href="#get_header_version">get_header_version()</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUGS">BUGS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<a href="#_podtop_"><h1 id="NAME">NAME</h1></a>
+
+<p>Alien::SDL - building, finding and using SDL binaries</p>
+
+<a href="#_podtop_"><h1 id="VERSION">VERSION</h1></a>
+
+<p>Version 1.440</p>
+
+<a href="#_podtop_"><h1 id="SYNOPSIS">SYNOPSIS</h1></a>
+
+<p>Alien::SDL tries (in given order) during its installation:</p>
+
+<ul>
+
+<li><p>When given <code>--with-sdl-config</code> option use specified sdl-config script to locate SDL libs.</p>
+
+<pre><code> perl Build.PL --with-sdl-config=/opt/sdl/bin/sdl-config</code></pre>
+
+<p>or using default script name &#39;sdl-config&#39; by running:</p>
+
+<pre><code> perl Build.PL --with-sdl-config</code></pre>
+
+<p><b>IMPORTANT NOTE:</b> Using --with-sdl-config avoids considering any other build methods; no prompt with other available build options.</p>
+
+</li>
+<li><p>Locate an already installed SDL via &#39;sdl-config&#39; script.</p>
+
+</li>
+<li><p>Check for SDL libs in directory specified by SDL_INST_DIR variable. In this case the module performs SDL library detection via &#39;$SDL_INST_DIR/bin/sdl-config&#39; script.</p>
+
+<pre><code> SDL_INST_DIR=/opt/sdl perl ./Build.PL</code></pre>
+
+</li>
+<li><p>Download prebuilt SDL binaries (if available for your platform).</p>
+
+</li>
+<li><p>Build SDL binaries from source codes (if possible on your system).</p>
+
+</li>
+</ul>
+
+<p>Later you can use Alien::SDL in your module that needs to link agains SDL and/or related libraries like this:</p>
+
+<pre><code>    # Sample Makefile.pl
+    use ExtUtils::MakeMaker;
+    use Alien::SDL;
+
+    WriteMakefile(
+      NAME         =&gt; &#39;Any::SDL::Module&#39;,
+      VERSION_FROM =&gt; &#39;lib/Any/SDL/Module.pm&#39;,
+      LIBS         =&gt; Alien::SDL-&gt;config(&#39;libs&#39;, [-lAdd_Lib]),
+      INC          =&gt; Alien::SDL-&gt;config(&#39;cflags&#39;),
+      # + additional params
+    );</code></pre>
+
+<a href="#_podtop_"><h1 id="DESCRIPTION">DESCRIPTION</h1></a>
+
+<p>Please see <a>Alien</a> for the manifesto of the Alien namespace.</p>
+
+<p>In short <code>Alien::SDL</code> can be used to detect and get configuration settings from an installed SDL and related libraries. Based on your platform it offers the possibility to download and install prebuilt binaries or to build SDL &amp; co. from source codes.</p>
+
+<p>The important facts:</p>
+
+<ul>
+
+<li><p>The module does not modify in any way the already existing SDL installation on your system.</p>
+
+</li>
+<li><p>If you reinstall SDL libs on your system you do not need to reinstall Alien::SDL (providing that you use the same directory for the new installation).</p>
+
+</li>
+<li><p>The prebuild binaries and/or binaries built from sources are always installed into perl module&#39;s &#39;share&#39; directory.</p>
+
+</li>
+<li><p>If you use prebuild binaries and/or binaries built from sources it happens that some of the dynamic libraries (*.so, *.dll) will not automaticly loadable as they will be stored somewhere under perl module&#39;s &#39;share&#39; directory. To handle this scenario Alien::SDL offers some special functionality (see below).</p>
+
+</li>
+</ul>
+
+<a href="#_podtop_"><h1 id="METHODS">METHODS</h1></a>
+
+<h2 id="config">config()</h2>
+
+<p>This function is the main public interface to this module. Basic functionality works in a very similar maner to &#39;sdl-config&#39; script:</p>
+
+<pre><code>    Alien::SDL-&gt;config(&#39;prefix&#39;);   # gives the same string as &#39;sdl-config --prefix&#39;
+    Alien::SDL-&gt;config(&#39;version&#39;);  # gives the same string as &#39;sdl-config --version&#39;
+    Alien::SDL-&gt;config(&#39;libs&#39;);     # gives the same string as &#39;sdl-config --libs&#39;
+    Alien::SDL-&gt;config(&#39;cflags&#39;);   # gives the same string as &#39;sdl-config --cflags&#39;</code></pre>
+
+<p>On top of that this function supports special parameters:</p>
+
+<pre><code>    Alien::SDL-&gt;config(&#39;ld_shared_libs&#39;);</code></pre>
+
+<p>Returns a list of full paths to shared libraries (*.so, *.dll) that will be required for running the resulting binaries you have linked with SDL libs.</p>
+
+<pre><code>    Alien::SDL-&gt;config(&#39;ld_paths&#39;);</code></pre>
+
+<p>Returns a list of full paths to directories with shared libraries (*.so, *.dll) that will be required for running the resulting binaries you have linked with SDL libs.</p>
+
+<pre><code>    Alien::SDL-&gt;config(&#39;ld_shlib_map&#39;);</code></pre>
+
+<p>Returns a reference to hash of value pairs &#39;&lt;libnick&gt;&#39; =&gt; &#39;&lt;full_path_to_shlib&#39;&gt;, where &#39;&lt;libnick&gt;&#39; is shortname for SDL related library like: SDL, SDL_gfx, SDL_net, SDL_sound ... + some non-SDL shortnames e.g. smpeg, jpeg, png.</p>
+
+<p>NOTE: config(&#39;ld_&lt;something&gt;&#39;) return an empty list/hash if you have decided to use SDL libraries already installed on your system. This concerns &#39;sdl-config&#39; detection and detection via &#39;$SDL_INST_DIR/bin/sdl-config&#39;.</p>
+
+<h2 id="check_header">check_header()</h2>
+
+<p>This function checks the availability of given header(s) when using compiler options provided by &quot;Alien::SDL-&gt;config(&#39;cflags&#39;)&quot;.</p>
+
+<pre><code>    Alien::SDL-&gt;check_header(&#39;SDL.h&#39;);
+    Alien::SDL-&gt;check_header(&#39;SDL.h&#39;, &#39;SDL_net.h&#39;);</code></pre>
+
+<p>Returns 1 if all given headers are available, 0 otherwise.</p>
+
+<h2 id="get_header_version">get_header_version()</h2>
+
+<p>Tries to find a header file specified as a param in SDL prefix direcotry and based on &quot;#define&quot; macros inside this header file tries to get a version triplet.</p>
+
+<pre><code>    Alien::SDL-&gt;get_header_version(&#39;SDL_mixer.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_version.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_gfxPrimitives.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_image.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_mixer.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_net.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;SDL_ttf.h&#39;);
+    Alien::SDL-&gt;get_header_version(&#39;smpeg.h&#39;);</code></pre>
+
+<p>Returns string like &#39;1.2.3&#39; or undef if not able to find and parse version info.</p>
+
+<a href="#_podtop_"><h1 id="BUGS">BUGS</h1></a>
+
+<p>Please post issues and bugs at <a href="http://rt.cpan.org/NoAuth/Bugs.html?Dist=Alien-SDL">http://rt.cpan.org/NoAuth/Bugs.html?Dist=Alien-SDL</a></p>
+
+<a href="#_podtop_"><h1 id="AUTHOR">AUTHOR</h1></a>
+
+<pre><code>    Kartik Thakore
+    CPAN ID: KTHAKORE
+    Thakore.Kartik@gmail.com
+    http://yapgh.blogspot.com</code></pre>
+
+<a href="#_podtop_"><h1 id="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</h1></a>
+
+<pre><code>    kmx - complete redesign between versions 0.7.x and 0.8.x</code></pre>
+
+<a href="#_podtop_"><h1 id="COPYRIGHT">COPYRIGHT</h1></a>
+
+<p>This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<p>The full text of the license can be found in the LICENSE file included with this module.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;Alien::SDL - building, finding and using SDL binaries</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

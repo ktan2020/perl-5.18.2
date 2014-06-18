@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#FUNCTIONS">FUNCTIONS</a>
+    <ul>
+      <li><a href="#msg-message-string-VERBOSE">msg(&quot;message string&quot; [,VERBOSE])</a></li>
+      <li><a href="#debug-message-string-VERBOSE">debug(&quot;message string&quot; [,VERBOSE])</a></li>
+      <li><a href="#error-error-string-VERBOSE">error(&quot;error string&quot; [,VERBOSE])</a></li>
+      <li><a href="#carp">carp();</a></li>
+      <li><a href="#croak">croak();</a></li>
+      <li><a href="#confess">confess();</a></li>
+      <li><a href="#cluck">cluck();</a></li>
+    </ul>
+  </li>
+  <li><a href="#CLASS-METHODS">CLASS METHODS</a>
+    <ul>
+      <li><a href="#Log::Message::Simple-stack">Log::Message::Simple-&gt;stack()</a></li>
+      <li><a href="#Log::Message::Simple-stack_as_string-TRACE">Log::Message::Simple-&gt;stack_as_string([TRACE])</a></li>
+      <li><a href="#Log::Message::Simple-flush">Log::Message::Simple-&gt;flush()</a></li>
+    </ul>
+  </li>
+  <li><a href="#GLOBAL-VARIABLES">GLOBAL VARIABLES</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Log::Message::Simple - Simplified interface to Log::Message</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Log::Message::Simple qw[msg error debug
+                                carp croak cluck confess];
+
+    use Log::Message::Simple qw[:STD :CARP];
+
+    ### standard reporting functionality
+    msg(    &quot;Connecting to database&quot;,           $verbose );
+    error(  &quot;Database connection failed: $@&quot;,   $verbose );
+    debug(  &quot;Connection arguments were: $args&quot;, $debug );
+
+    ### standard carp functionality
+    carp(   &quot;Wrong arguments passed: @_&quot; );
+    croak(  &quot;Fatal: wrong arguments passed: @_&quot; );
+    cluck(  &quot;Wrong arguments passed -- including stacktrace: @_&quot; );
+    confess(&quot;Fatal: wrong arguments passed -- including stacktrace: @_&quot; );
+
+    ### retrieve individual message
+    my @stack = Log::Message::Simple-&gt;stack;
+    my @stack = Log::Message::Simple-&gt;flush;
+
+    ### retrieve the entire stack in printable form
+    my $msgs  = Log::Message::Simple-&gt;stack_as_string;
+    my $trace = Log::Message::Simple-&gt;stack_as_string(1);
+
+    ### redirect output
+    local $Log::Message::Simple::MSG_FH     = \*STDERR;
+    local $Log::Message::Simple::ERROR_FH   = \*STDERR;
+    local $Log::Message::Simple::DEBUG_FH   = \*STDERR;
+
+    ### force a stacktrace on error
+    local $Log::Message::Simple::STACKTRACE_ON_ERROR = 1</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This module provides standardized logging facilities using the <code>Log::Message</code> module.</p>
+
+<h1 id="FUNCTIONS">FUNCTIONS</h1>
+
+<h2 id="msg-message-string-VERBOSE">msg(&quot;message string&quot; [,VERBOSE])</h2>
+
+<p>Records a message on the stack, and prints it to <code>STDOUT</code> (or actually <code>$MSG_FH</code>, see the <code>GLOBAL VARIABLES</code> section below), if the <code>VERBOSE</code> option is true. The <code>VERBOSE</code> option defaults to false.</p>
+
+<p>Exported by default, or using the <code>:STD</code> tag.</p>
+
+<h2 id="debug-message-string-VERBOSE">debug(&quot;message string&quot; [,VERBOSE])</h2>
+
+<p>Records a debug message on the stack, and prints it to <code>STDOUT</code> (or actually <code>$DEBUG_FH</code>, see the <code>GLOBAL VARIABLES</code> section below), if the <code>VERBOSE</code> option is true. The <code>VERBOSE</code> option defaults to false.</p>
+
+<p>Exported by default, or using the <code>:STD</code> tag.</p>
+
+<h2 id="error-error-string-VERBOSE">error(&quot;error string&quot; [,VERBOSE])</h2>
+
+<p>Records an error on the stack, and prints it to <code>STDERR</code> (or actually <code>$ERROR_FH</code>, see the <code>GLOBAL VARIABLES</code> sections below), if the <code>VERBOSE</code> option is true. The <code>VERBOSE</code> options defaults to true.</p>
+
+<p>Exported by default, or using the <code>:STD</code> tag.</p>
+
+<h2 id="carp">carp();</h2>
+
+<p>Provides functionality equal to <code>Carp::carp()</code> while still logging to the stack.</p>
+
+<p>Exported by using the <code>:CARP</code> tag.</p>
+
+<h2 id="croak">croak();</h2>
+
+<p>Provides functionality equal to <code>Carp::croak()</code> while still logging to the stack.</p>
+
+<p>Exported by using the <code>:CARP</code> tag.</p>
+
+<h2 id="confess">confess();</h2>
+
+<p>Provides functionality equal to <code>Carp::confess()</code> while still logging to the stack.</p>
+
+<p>Exported by using the <code>:CARP</code> tag.</p>
+
+<h2 id="cluck">cluck();</h2>
+
+<p>Provides functionality equal to <code>Carp::cluck()</code> while still logging to the stack.</p>
+
+<p>Exported by using the <code>:CARP</code> tag.</p>
+
+<h1 id="CLASS-METHODS">CLASS METHODS</h1>
+
+<h2 id="Log::Message::Simple-stack">Log::Message::Simple-&gt;stack()</h2>
+
+<p>Retrieves all the items on the stack. Since <code>Log::Message::Simple</code> is implemented using <code>Log::Message</code>, consult its manpage for the function <code>retrieve</code> to see what is returned and how to use the items.</p>
+
+<h2 id="Log::Message::Simple-stack_as_string-TRACE">Log::Message::Simple-&gt;stack_as_string([TRACE])</h2>
+
+<p>Returns the whole stack as a printable string. If the <code>TRACE</code> option is true all items are returned with <code>Carp::longmess</code> output, rather than just the message. <code>TRACE</code> defaults to false.</p>
+
+<h2 id="Log::Message::Simple-flush">Log::Message::Simple-&gt;flush()</h2>
+
+<p>Removes all the items from the stack and returns them. Since <code>Log::Message::Simple</code> is implemented using <code>Log::Message</code>, consult its manpage for the function <code>retrieve</code> to see what is returned and how to use the items.</p>
+
+<h1 id="GLOBAL-VARIABLES">GLOBAL VARIABLES</h1>
+
+<dl>
+
+<dt id="ERROR_FH">$ERROR_FH</dt>
+<dd>
+
+<p>This is the filehandle all the messages sent to <code>error()</code> are being printed. This defaults to <code>*STDERR</code>.</p>
+
+</dd>
+<dt id="MSG_FH">$MSG_FH</dt>
+<dd>
+
+<p>This is the filehandle all the messages sent to <code>msg()</code> are being printed. This default to <code>*STDOUT</code>.</p>
+
+</dd>
+<dt id="DEBUG_FH">$DEBUG_FH</dt>
+<dd>
+
+<p>This is the filehandle all the messages sent to <code>debug()</code> are being printed. This default to <code>*STDOUT</code>.</p>
+
+</dd>
+<dt id="STACKTRACE_ON_ERROR">$STACKTRACE_ON_ERROR</dt>
+<dd>
+
+<p>If this option is set to <code>true</code>, every call to <code>error()</code> will generate a stacktrace using <code>Carp::shortmess()</code>. Defaults to <code>false</code></p>
+
+</dd>
+</dl>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

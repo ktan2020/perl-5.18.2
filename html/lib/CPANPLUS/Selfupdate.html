@@ -1,0 +1,169 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#self-CPANPLUS::Selfupdate-new-backend_object">$self = CPANPLUS::Selfupdate-&gt;new( $backend_object );</a></li>
+      <li><a href="#cat-self-list_categories">@cat = $self-&gt;list_categories</a></li>
+      <li><a href="#list-self-list_modules_to_update-update-core-dependencies-enabled_features-features-all-latest-BOOL">%list = $self-&gt;list_modules_to_update( update =&gt; &quot;core|dependencies|enabled_features|features|all&quot;, [latest =&gt; BOOL] )</a></li>
+      <li><a href="#bool-self-selfupdate-update-core-dependencies-enabled_features-features-all-latest-BOOL-force-BOOL">$bool = $self-&gt;selfupdate( update =&gt; &quot;core|dependencies|enabled_features|features|all&quot;, [latest =&gt; BOOL, force =&gt; BOOL] )</a></li>
+      <li><a href="#features-self-list_features">@features = $self-&gt;list_features</a></li>
+      <li><a href="#features-self-list_enabled_features">@features = $self-&gt;list_enabled_features</a></li>
+      <li><a href="#mods-self-modules_for_feature-FEATURE-AS_HASH">@mods = $self-&gt;modules_for_feature( FEATURE [,AS_HASH] )</a></li>
+      <li><a href="#mods-self-list_core_dependencies-AS_HASH">@mods = $self-&gt;list_core_dependencies( [AS_HASH] )</a></li>
+      <li><a href="#mods-self-list_core_modules-AS_HASH">@mods = $self-&gt;list_core_modules( [AS_HASH] )</a></li>
+    </ul>
+  </li>
+  <li><a href="#CPANPLUS::Selfupdate::Module">CPANPLUS::Selfupdate::Module</a>
+    <ul>
+      <li><a href="#version-mod-version_required">$version = $mod-&gt;version_required</a></li>
+      <li><a href="#bool-mod-is_installed_version_sufficient">$bool = $mod-&gt;is_installed_version_sufficient</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUG-REPORTS">BUG REPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Selfupdate - self-updating for CPANPLUS</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    $su     = $cb-&gt;selfupdate_object;
+
+    @feats  = $su-&gt;list_features;
+    @feats  = $su-&gt;list_enabled_features;
+
+    @mods   = map { $su-&gt;modules_for_feature( $_ ) } @feats;
+    @mods   = $su-&gt;list_core_dependencies;
+    @mods   = $su-&gt;list_core_modules;
+
+    for ( @mods ) {
+        print $_-&gt;name &quot; should be version &quot; . $_-&gt;version_required;
+        print &quot;Installed version is not uptodate!&quot;
+            unless $_-&gt;is_installed_version_sufficient;
+    }
+
+    $ok     = $su-&gt;selfupdate( update =&gt; &#39;all&#39;, latest =&gt; 0 );</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="self-CPANPLUS::Selfupdate-new-backend_object">$self = CPANPLUS::Selfupdate-&gt;new( $backend_object );</h2>
+
+<p>Sets up a new selfupdate object. Called automatically when a new backend object is created.</p>
+
+<h2 id="cat-self-list_categories">@cat = $self-&gt;list_categories</h2>
+
+<p>Returns a list of categories that the <code>selfupdate</code> method accepts.</p>
+
+<p>See <code>selfupdate</code> for details.</p>
+
+<h2 id="list-self-list_modules_to_update-update-core-dependencies-enabled_features-features-all-latest-BOOL">%list = $self-&gt;list_modules_to_update( update =&gt; &quot;core|dependencies|enabled_features|features|all&quot;, [latest =&gt; BOOL] )</h2>
+
+<p>List which modules <code>selfupdate</code> would upgrade. You can update either the core (CPANPLUS itself), the core dependencies, all features you have currently turned on, or all features available, or everything.</p>
+
+<p>The <code>latest</code> option determines whether it should update to the latest version on CPAN, or if the minimal required version for CPANPLUS is good enough.</p>
+
+<p>Returns a hash of feature names and lists of module objects to be upgraded based on the category you provided. For example:</p>
+
+<pre><code>    %list = $self-&gt;list_modules_to_update( update =&gt; &#39;core&#39; );</code></pre>
+
+<p>Would return:</p>
+
+<pre><code>    ( core =&gt; [ $module_object_for_cpanplus ] );</code></pre>
+
+<h2 id="bool-self-selfupdate-update-core-dependencies-enabled_features-features-all-latest-BOOL-force-BOOL">$bool = $self-&gt;selfupdate( update =&gt; &quot;core|dependencies|enabled_features|features|all&quot;, [latest =&gt; BOOL, force =&gt; BOOL] )</h2>
+
+<p>Selfupdate CPANPLUS. You can update either the core (CPANPLUS itself), the core dependencies, all features you have currently turned on, or all features available, or everything.</p>
+
+<p>The <code>latest</code> option determines whether it should update to the latest version on CPAN, or if the minimal required version for CPANPLUS is good enough.</p>
+
+<p>Returns true on success, false on error.</p>
+
+<h2 id="features-self-list_features">@features = $self-&gt;list_features</h2>
+
+<p>Returns a list of features that are supported by CPANPLUS.</p>
+
+<h2 id="features-self-list_enabled_features">@features = $self-&gt;list_enabled_features</h2>
+
+<p>Returns a list of features that are enabled in your current CPANPLUS installation.</p>
+
+<h2 id="mods-self-modules_for_feature-FEATURE-AS_HASH">@mods = $self-&gt;modules_for_feature( FEATURE [,AS_HASH] )</h2>
+
+<p>Returns a list of <code>CPANPLUS::Selfupdate::Module</code> objects which represent the modules required to support this feature.</p>
+
+<p>For a list of features, call the <code>list_features</code> method.</p>
+
+<p>If the <code>AS_HASH</code> argument is provided, no module objects are returned, but a hashref where the keys are names of the modules, and values are their minimum versions.</p>
+
+<h2 id="mods-self-list_core_dependencies-AS_HASH">@mods = $self-&gt;list_core_dependencies( [AS_HASH] )</h2>
+
+<p>Returns a list of <code>CPANPLUS::Selfupdate::Module</code> objects which represent the modules that comprise the core dependencies of CPANPLUS.</p>
+
+<p>If the <code>AS_HASH</code> argument is provided, no module objects are returned, but a hashref where the keys are names of the modules, and values are their minimum versions.</p>
+
+<h2 id="mods-self-list_core_modules-AS_HASH">@mods = $self-&gt;list_core_modules( [AS_HASH] )</h2>
+
+<p>Returns a list of <code>CPANPLUS::Selfupdate::Module</code> objects which represent the modules that comprise the core of CPANPLUS.</p>
+
+<p>If the <code>AS_HASH</code> argument is provided, no module objects are returned, but a hashref where the keys are names of the modules, and values are their minimum versions.</p>
+
+<h1 id="CPANPLUS::Selfupdate::Module">CPANPLUS::Selfupdate::Module</h1>
+
+<p><code>CPANPLUS::Selfupdate::Module</code> extends <code>CPANPLUS::Module</code> objects by providing accessors to aid in selfupdating CPANPLUS.</p>
+
+<p>These objects are returned by all methods of <code>CPANPLUS::Selfupdate</code> that return module objects.</p>
+
+<h2 id="version-mod-version_required">$version = $mod-&gt;version_required</h2>
+
+<p>Returns the version of this module required for CPANPLUS.</p>
+
+<h2 id="bool-mod-is_installed_version_sufficient">$bool = $mod-&gt;is_installed_version_sufficient</h2>
+
+<p>Returns true if the installed version of this module is sufficient for CPANPLUS, or false if it is not.</p>
+
+<h1 id="BUG-REPORTS">BUG REPORTS</h1>
+
+<p>Please report bugs or other issues to &lt;bug-cpanplus@rt.cpan.org&lt;gt&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>This module by Jos Boumans &lt;kane@cpan.org&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>The CPAN++ interface (of which this module is a part of) is copyright (c) 2001 - 2007, Jos Boumans &lt;kane@cpan.org&gt;. All rights reserved.</p>
+
+<p>This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

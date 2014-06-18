@@ -1,0 +1,530 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#CLASS-METHODS">CLASS METHODS</a>
+    <ul>
+      <li><a href="#accessors">accessors ()</a></li>
+    </ul>
+  </li>
+  <li><a href="#ACCESSORS">ACCESSORS</a></li>
+  <li><a href="#STATUS-ACCESSORS">STATUS ACCESSORS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#self-CPANPLUS::Module-new-OPTIONS">$self = CPANPLUS::Module-&gt;new( OPTIONS )</a></li>
+      <li><a href="#mod-package_name-package_string">$mod-&gt;package_name( [$package_string] )</a></li>
+      <li><a href="#mod-package_version-package_string">$mod-&gt;package_version( [$package_string] )</a></li>
+      <li><a href="#mod-package_extension-package_string">$mod-&gt;package_extension( [$package_string] )</a></li>
+      <li><a href="#mod-package_is_perl_core">$mod-&gt;package_is_perl_core</a></li>
+      <li><a href="#mod-module_is_supplied_with_perl_core-version">$mod-&gt;module_is_supplied_with_perl_core( [version =&gt; $]] )</a></li>
+      <li><a href="#mod-is_bundle">$mod-&gt;is_bundle</a></li>
+      <li><a href="#mod-is_autobundle">$mod-&gt;is_autobundle;</a></li>
+      <li><a href="#mod-is_third_party">$mod-&gt;is_third_party</a></li>
+      <li><a href="#mod-third_party_information">$mod-&gt;third_party_information</a></li>
+      <li><a href="#clone-self-clone">$clone = $self-&gt;clone</a></li>
+      <li><a href="#where-self-fetch">$where = $self-&gt;fetch</a></li>
+      <li><a href="#path-self-extract">$path = $self-&gt;extract</a></li>
+      <li><a href="#type-self-get_installer_type-prefer_makefile-BOOL">$type = $self-&gt;get_installer_type([prefer_makefile =&gt; BOOL])</a></li>
+      <li><a href="#dist-self-dist-target-prepare-create-format-DISTRIBUTION_TYPE-args-key-val">$dist = $self-&gt;dist([target =&gt; &#39;prepare|create&#39;, format =&gt; DISTRIBUTION_TYPE, args =&gt; {key =&gt; val}]);</a></li>
+      <li><a href="#bool-mod-prepare">$bool = $mod-&gt;prepare( )</a></li>
+      <li><a href="#bool-mod-create">$bool = $mod-&gt;create( )</a></li>
+      <li><a href="#bool-mod-test">$bool = $mod-&gt;test( )</a></li>
+      <li><a href="#bool-self-install-target-init-prepare-create-install-format-FORMAT_TYPE-extractdir-DIRECTORY-fetchdir-DIRECTORY-prefer_bin-BOOL-force-BOOL-verbose-BOOL">$bool = $self-&gt;install([ target =&gt; &#39;init|prepare|create|install&#39;, format =&gt; FORMAT_TYPE, extractdir =&gt; DIRECTORY, fetchdir =&gt; DIRECTORY, prefer_bin =&gt; BOOL, force =&gt; BOOL, verbose =&gt; BOOL, ..... ]);</a></li>
+      <li><a href="#text-self-readme">$text = $self-&gt;readme</a></li>
+      <li><a href="#version-self-installed_version">$version = $self-&gt;installed_version()</a></li>
+      <li><a href="#where-self-installed_file">$where = $self-&gt;installed_file()</a></li>
+      <li><a href="#dir-self-installed_dir">$dir = $self-&gt;installed_dir()</a></li>
+      <li><a href="#bool-self-is_uptodate-version-VERSION_NUMBER">$bool = $self-&gt;is_uptodate([version =&gt; VERSION_NUMBER])</a></li>
+      <li><a href="#href-self-details">$href = $self-&gt;details()</a></li>
+      <li><a href="#list-self-contains">@list = $self-&gt;contains()</a></li>
+      <li><a href="#list_of_hrefs-self-fetch_report">@list_of_hrefs = $self-&gt;fetch_report()</a></li>
+      <li><a href="#bool-self-uninstall-type-all-man-prog">$bool = $self-&gt;uninstall([type =&gt; [all|man|prog])</a></li>
+      <li><a href="#modobj-self-distributions">@modobj = $self-&gt;distributions()</a></li>
+      <li><a href="#list-self-files">@list = $self-&gt;files ()</a></li>
+      <li><a href="#list-self-directory_tree">@list = $self-&gt;directory_tree ()</a></li>
+      <li><a href="#list-self-packlist">@list = $self-&gt;packlist ()</a></li>
+      <li><a href="#list-self-validate">@list = $self-&gt;validate ()</a></li>
+      <li><a href="#bool-self-add_to_includepath">$bool = $self-&gt;add_to_includepath;</a></li>
+      <li><a href="#path-self-best_path_to_module_build">$path = $self-&gt;best_path_to_module_build();</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUG-REPORTS">BUG REPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Module - CPAN module objects for CPANPLUS</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    ### get a module object from the CPANPLUS::Backend object
+    my $mod = $cb-&gt;module_tree(&#39;Some::Module&#39;);
+
+    ### accessors
+    $mod-&gt;version;
+    $mod-&gt;package;
+
+    ### methods
+    $mod-&gt;fetch;
+    $mod-&gt;extract;
+    $mod-&gt;install;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>CPANPLUS::Module</code> creates objects from the information in the source files. These can then be used to query and perform actions on, like fetching or installing.</p>
+
+<p>These objects should only be created internally. For <code>fake</code> objects, there&#39;s the <code>CPANPLUS::Module::Fake</code> class. To obtain a module object consult the <code>CPANPLUS::Backend</code> documentation.</p>
+
+<h1 id="CLASS-METHODS">CLASS METHODS</h1>
+
+<h2 id="accessors">accessors ()</h2>
+
+<p>Returns a list of all accessor methods to the object</p>
+
+<h1 id="ACCESSORS">ACCESSORS</h1>
+
+<p>An objects of this class has the following accessors:</p>
+
+<dl>
+
+<dt id="name">name</dt>
+<dd>
+
+<p>Name of the module.</p>
+
+</dd>
+<dt id="module">module</dt>
+<dd>
+
+<p>Name of the module.</p>
+
+</dd>
+<dt id="version">version</dt>
+<dd>
+
+<p>Version of the module. Defaults to &#39;0.0&#39; if none was provided.</p>
+
+</dd>
+<dt id="path">path</dt>
+<dd>
+
+<p>Extended path on the mirror.</p>
+
+</dd>
+<dt id="comment">comment</dt>
+<dd>
+
+<p>Any comment about the module -- largely unused.</p>
+
+</dd>
+<dt id="package">package</dt>
+<dd>
+
+<p>The name of the package.</p>
+
+</dd>
+<dt id="description">description</dt>
+<dd>
+
+<p>Description of the module -- only registered modules have this.</p>
+
+</dd>
+<dt id="dslip">dslip</dt>
+<dd>
+
+<p>The five character dslip string, that represents meta-data of the module -- again, only registered modules have this.</p>
+
+</dd>
+<dt id="status">status</dt>
+<dd>
+
+<p>The <code>CPANPLUS::Module::Status</code> object associated with this object. (see below).</p>
+
+</dd>
+<dt id="author">author</dt>
+<dd>
+
+<p>The <code>CPANPLUS::Module::Author</code> object associated with this object.</p>
+
+</dd>
+<dt id="parent">parent</dt>
+<dd>
+
+<p>The <code>CPANPLUS::Internals</code> object that spawned this module object.</p>
+
+</dd>
+</dl>
+
+<h1 id="STATUS-ACCESSORS">STATUS ACCESSORS</h1>
+
+<p><code>CPANPLUS</code> caches a lot of results from method calls and saves data it collected along the road for later reuse.</p>
+
+<p><code>CPANPLUS</code> uses this internally, but it is also available for the end user. You can get a status object by calling:</p>
+
+<pre><code>    $modobj-&gt;status</code></pre>
+
+<p>You can then query the object as follows:</p>
+
+<dl>
+
+<dt id="installer_type">installer_type</dt>
+<dd>
+
+<p>The installer type used for this distribution. Will be one of &#39;makemaker&#39; or &#39;build&#39;. This determines whether <code>CPANPLUS::Dist::MM</code> or <code>CPANPLUS::Dist::Build</code> will be used to build this distribution.</p>
+
+</dd>
+<dt id="dist_cpan">dist_cpan</dt>
+<dd>
+
+<p>The dist object used to do the CPAN-side of the installation. Either a <code>CPANPLUS::Dist::MM</code> or <code>CPANPLUS::Dist::Build</code> object.</p>
+
+</dd>
+<dt id="dist">dist</dt>
+<dd>
+
+<p>The custom dist object used to do the operating specific side of the installation, if you&#39;ve chosen to use this. For example, if you&#39;ve chosen to install using the <code>ports</code> format, this may be a <code>CPANPLUS::Dist::Ports</code> object.</p>
+
+<p>Undefined if you didn&#39;t specify a separate format to install through.</p>
+
+</dd>
+<dt id="prereqs-requires">prereqs | requires</dt>
+<dd>
+
+<p>A hashref of prereqs this distribution was found to have. Will look something like this:</p>
+
+<pre><code>    { Carp  =&gt; 0.01, strict =&gt; 0 }</code></pre>
+
+<p>Might be undefined if the distribution didn&#39;t have any prerequisites.</p>
+
+</dd>
+<dt id="configure_requires">configure_requires</dt>
+<dd>
+
+<p>Like prereqs, but these are necessary to be installed before the build process can even begin.</p>
+
+</dd>
+<dt id="signature">signature</dt>
+<dd>
+
+<p>Flag indicating, if a signature check was done, whether it was OK or not.</p>
+
+</dd>
+<dt id="extract">extract</dt>
+<dd>
+
+<p>The directory this distribution was extracted to.</p>
+
+</dd>
+<dt id="fetch">fetch</dt>
+<dd>
+
+<p>The location this distribution was fetched to.</p>
+
+</dd>
+<dt id="readme">readme</dt>
+<dd>
+
+<p>The text of this distributions README file.</p>
+
+</dd>
+<dt id="uninstall">uninstall</dt>
+<dd>
+
+<p>Flag indicating if an uninstall call was done successfully.</p>
+
+</dd>
+<dt id="created">created</dt>
+<dd>
+
+<p>Flag indicating if the <code>create</code> call to your dist object was done successfully.</p>
+
+</dd>
+<dt id="installed">installed</dt>
+<dd>
+
+<p>Flag indicating if the <code>install</code> call to your dist object was done successfully.</p>
+
+</dd>
+<dt id="checksums">checksums</dt>
+<dd>
+
+<p>The location of this distributions CHECKSUMS file.</p>
+
+</dd>
+<dt id="checksum_ok">checksum_ok</dt>
+<dd>
+
+<p>Flag indicating if the checksums check was done successfully.</p>
+
+</dd>
+<dt id="checksum_value">checksum_value</dt>
+<dd>
+
+<p>The checksum value this distribution is expected to have</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="self-CPANPLUS::Module-new-OPTIONS">$self = CPANPLUS::Module-&gt;new( OPTIONS )</h2>
+
+<p>This method returns a <code>CPANPLUS::Module</code> object. Normal users should never call this method directly, but instead use the <code>CPANPLUS::Backend</code> to obtain module objects.</p>
+
+<p>This example illustrates a <code>new()</code> call with all required arguments:</p>
+
+<pre><code>        CPANPLUS::Module-&gt;new(
+            module  =&gt; &#39;Foo&#39;,
+            path    =&gt; &#39;authors/id/A/AA/AAA&#39;,
+            package =&gt; &#39;Foo-1.0.tgz&#39;,
+            author  =&gt; $author_object,
+            _id     =&gt; INTERNALS_OBJECT_ID,
+        );</code></pre>
+
+<p>Every accessor is also a valid option to pass to <code>new</code>.</p>
+
+<p>Returns a module object on success and false on failure.</p>
+
+<h2 id="mod-package_name-package_string">$mod-&gt;package_name( [$package_string] )</h2>
+
+<p>Returns the name of the package a module is in. For <code>Acme::Bleach</code> that might be <code>Acme-Bleach</code>.</p>
+
+<h2 id="mod-package_version-package_string">$mod-&gt;package_version( [$package_string] )</h2>
+
+<p>Returns the version of the package a module is in. For a module in the package <code>Acme-Bleach-1.1.tar.gz</code> this would be <code>1.1</code>.</p>
+
+<h2 id="mod-package_extension-package_string">$mod-&gt;package_extension( [$package_string] )</h2>
+
+<p>Returns the suffix added by the compression method of a package a certain module is in. For a module in <code>Acme-Bleach-1.1.tar.gz</code>, this would be <code>tar.gz</code>.</p>
+
+<h2 id="mod-package_is_perl_core">$mod-&gt;package_is_perl_core</h2>
+
+<p>Returns a boolean indicating of the package a particular module is in, is actually a core perl distribution.</p>
+
+<h2 id="mod-module_is_supplied_with_perl_core-version">$mod-&gt;module_is_supplied_with_perl_core( [version =&gt; $]] )</h2>
+
+<p>Returns a boolean indicating whether <code>ANY VERSION</code> of this module was supplied with the current running perl&#39;s core package.</p>
+
+<h2 id="mod-is_bundle">$mod-&gt;is_bundle</h2>
+
+<p>Returns a boolean indicating if the module you are looking at, is actually a bundle. Bundles are identified as modules whose name starts with <code>Bundle::</code>.</p>
+
+<h2 id="mod-is_autobundle">$mod-&gt;is_autobundle;</h2>
+
+<p>Returns a boolean indicating if the module you are looking at, is actually an autobundle as generated by <code>$cb-&gt;autobundle</code>.</p>
+
+<h2 id="mod-is_third_party">$mod-&gt;is_third_party</h2>
+
+<p>Returns a boolean indicating whether the package is a known third-party module (i.e. it&#39;s not provided by the standard Perl distribution and is not available on the CPAN, but on a third party software provider). See <a>Module::ThirdParty</a> for more details.</p>
+
+<h2 id="mod-third_party_information">$mod-&gt;third_party_information</h2>
+
+<p>Returns a reference to a hash with more information about a third-party module. See the documentation about <code>module_information()</code> in <a>Module::ThirdParty</a> for more details.</p>
+
+<h2 id="clone-self-clone">$clone = $self-&gt;clone</h2>
+
+<p>Clones the current module object for tinkering with. It will have a clean <code>CPANPLUS::Module::Status</code> object, as well as a fake <code>CPANPLUS::Module::Author</code> object.</p>
+
+<h2 id="where-self-fetch">$where = $self-&gt;fetch</h2>
+
+<p>Fetches the module from a CPAN mirror. Look at <a>CPANPLUS::Internals::Fetch::_fetch()</a> for details on the options you can pass.</p>
+
+<h2 id="path-self-extract">$path = $self-&gt;extract</h2>
+
+<p>Extracts the fetched module. Look at <a>CPANPLUS::Internals::Extract::_extract()</a> for details on the options you can pass.</p>
+
+<h2 id="type-self-get_installer_type-prefer_makefile-BOOL">$type = $self-&gt;get_installer_type([prefer_makefile =&gt; BOOL])</h2>
+
+<p>Gets the installer type for this module. This may either be <code>build</code> or <code>makemaker</code>. If <code>Module::Build</code> is unavailable or no installer type is available, it will fall back to <code>makemaker</code>. If both are available, it will pick the one indicated by your config, or by the <code>prefer_makefile</code> option you can pass to this function.</p>
+
+<p>Returns the installer type on success, and false on error.</p>
+
+<h2 id="dist-self-dist-target-prepare-create-format-DISTRIBUTION_TYPE-args-key-val">$dist = $self-&gt;dist([target =&gt; &#39;prepare|create&#39;, format =&gt; DISTRIBUTION_TYPE, args =&gt; {key =&gt; val}]);</h2>
+
+<p>Create a distribution object, ready to be installed. Distribution type defaults to your config settings</p>
+
+<p>The optional <code>args</code> hashref is passed on to the specific distribution types&#39; <code>create</code> method after being dereferenced.</p>
+
+<p>Returns a distribution object on success, false on failure.</p>
+
+<p>See <code>CPANPLUS::Dist</code> for details.</p>
+
+<h2 id="bool-mod-prepare">$bool = $mod-&gt;prepare( )</h2>
+
+<p>Convenience method around <code>install()</code> that prepares a module without actually building it. This is equivalent to invoking <code>install</code> with <code>target</code> set to <code>prepare</code></p>
+
+<p>Returns true on success, false on failure.</p>
+
+<h2 id="bool-mod-create">$bool = $mod-&gt;create( )</h2>
+
+<p>Convenience method around <code>install()</code> that creates a module. This is equivalent to invoking <code>install</code> with <code>target</code> set to <code>create</code></p>
+
+<p>Returns true on success, false on failure.</p>
+
+<h2 id="bool-mod-test">$bool = $mod-&gt;test( )</h2>
+
+<p>Convenience wrapper around <code>install()</code> that tests a module, without installing it. It&#39;s the equivalent to invoking <code>install()</code> with <code>target</code> set to <code>create</code> and <code>skiptest</code> set to <code>0</code>.</p>
+
+<p>Returns true on success, false on failure.</p>
+
+<h2 id="bool-self-install-target-init-prepare-create-install-format-FORMAT_TYPE-extractdir-DIRECTORY-fetchdir-DIRECTORY-prefer_bin-BOOL-force-BOOL-verbose-BOOL">$bool = $self-&gt;install([ target =&gt; &#39;init|prepare|create|install&#39;, format =&gt; FORMAT_TYPE, extractdir =&gt; DIRECTORY, fetchdir =&gt; DIRECTORY, prefer_bin =&gt; BOOL, force =&gt; BOOL, verbose =&gt; BOOL, ..... ]);</h2>
+
+<p>Installs the current module. This includes fetching it and extracting it, if this hasn&#39;t been done yet, as well as creating a distribution object for it.</p>
+
+<p>This means you can pass it more arguments than described above, which will be passed on to the relevant methods as they are called.</p>
+
+<p>See <code>CPANPLUS::Internals::Fetch</code>, <code>CPANPLUS::Internals::Extract</code> and <code>CPANPLUS::Dist</code> for details.</p>
+
+<p>Returns true on success, false on failure.</p>
+
+<p>Returns a list of module objects the Bundle specifies.</p>
+
+<p>This requires you to have extracted the bundle already, using the <code>extract()</code> method.</p>
+
+<p>Returns false on error.</p>
+
+<h2 id="text-self-readme">$text = $self-&gt;readme</h2>
+
+<p>Fetches the readme belonging to this module and stores it under <code>$obj-&gt;status-&gt;readme</code>. Returns the readme as a string on success and returns false on failure.</p>
+
+<h2 id="version-self-installed_version">$version = $self-&gt;installed_version()</h2>
+
+<p>Returns the currently installed version of this module, if any.</p>
+
+<h2 id="where-self-installed_file">$where = $self-&gt;installed_file()</h2>
+
+<p>Returns the location of the currently installed file of this module, if any.</p>
+
+<h2 id="dir-self-installed_dir">$dir = $self-&gt;installed_dir()</h2>
+
+<p>Returns the directory (or more accurately, the <code>@INC</code> handle) from which this module was loaded, if any.</p>
+
+<h2 id="bool-self-is_uptodate-version-VERSION_NUMBER">$bool = $self-&gt;is_uptodate([version =&gt; VERSION_NUMBER])</h2>
+
+<p>Returns a boolean indicating if this module is uptodate or not.</p>
+
+<h2 id="href-self-details">$href = $self-&gt;details()</h2>
+
+<p>Returns a hashref with key/value pairs offering more information about a particular module. For example, for <code>Time::HiRes</code> it might look like this:</p>
+
+<pre><code>    Author                  Jarkko Hietaniemi (jhi@iki.fi)
+    Description             High resolution time, sleep, and alarm
+    Development Stage       Released
+    Installed File          /usr/local/perl/lib/Time/Hires.pm
+    Interface Style         plain Functions, no references used
+    Language Used           C and perl, a C compiler will be needed
+    Package                 Time-HiRes-1.65.tar.gz
+    Public License          Unknown
+    Support Level           Developer
+    Version Installed       1.52
+    Version on CPAN         1.65</code></pre>
+
+<h2 id="list-self-contains">@list = $self-&gt;contains()</h2>
+
+<p>Returns a list of module objects that represent the modules also present in the package of this module.</p>
+
+<p>For example, for <code>Archive::Tar</code> this might return:</p>
+
+<pre><code>    Archive::Tar
+    Archive::Tar::Constant
+    Archive::Tar::File</code></pre>
+
+<h2 id="list_of_hrefs-self-fetch_report">@list_of_hrefs = $self-&gt;fetch_report()</h2>
+
+<p>This function queries the CPAN testers database at <i>http://testers.cpan.org/</i> for test results of specified module objects, module names or distributions.</p>
+
+<p>Look at <a>CPANPLUS::Internals::Report::_query_report()</a> for details on the options you can pass and the return value to expect.</p>
+
+<h2 id="bool-self-uninstall-type-all-man-prog">$bool = $self-&gt;uninstall([type =&gt; [all|man|prog])</h2>
+
+<p>This function uninstalls the specified module object.</p>
+
+<p>You can install 2 types of files, either <code>man</code> pages or <code>prog</code>ram files. Alternately you can specify <code>all</code> to uninstall both (which is the default).</p>
+
+<p>Returns true on success and false on failure.</p>
+
+<p>Do note that this does an uninstall via the so-called <code>.packlist</code>, so if you used a module installer like say, <code>ports</code> or <code>apt</code>, you should not use this, but use your package manager instead.</p>
+
+<h2 id="modobj-self-distributions">@modobj = $self-&gt;distributions()</h2>
+
+<p>Returns a list of module objects representing all releases for this module on success, false on failure.</p>
+
+<h2 id="list-self-files">@list = $self-&gt;files ()</h2>
+
+<p>Returns a list of files used by this module, if it is installed.</p>
+
+<h2 id="list-self-directory_tree">@list = $self-&gt;directory_tree ()</h2>
+
+<p>Returns a list of directories used by this module.</p>
+
+<h2 id="list-self-packlist">@list = $self-&gt;packlist ()</h2>
+
+<p>Returns the <code>ExtUtils::Packlist</code> object for this module.</p>
+
+<h2 id="list-self-validate">@list = $self-&gt;validate ()</h2>
+
+<p>Returns a list of files that are missing for this modules, but are present in the .packlist file.</p>
+
+<h2 id="bool-self-add_to_includepath">$bool = $self-&gt;add_to_includepath;</h2>
+
+<p>Adds the current modules path to <code>@INC</code> and <code>$PERL5LIB</code>. This allows you to add the module from its build dir to your path.</p>
+
+<p>It also adds the current modules <code>bin</code> and/or <code>script</code> paths to the PATH.</p>
+
+<p>You can reset <code>$PATH</code>, <code>@INC</code> and <code>$PERL5LIB</code> to their original state when you started the program, by calling:</p>
+
+<pre><code>    $self-&gt;parent-&gt;flush(&#39;lib&#39;);</code></pre>
+
+<h2 id="path-self-best_path_to_module_build">$path = $self-&gt;best_path_to_module_build();</h2>
+
+<p><b>OBSOLETE</b></p>
+
+<p>If a newer version of Module::Build is found in your path, it will return this <code>special</code> path. If the newest version of <code>Module::Build</code> is found in your regular <code>@INC</code>, the method will return false. This indicates you do not need to add a special directory to your <code>@INC</code>.</p>
+
+<p>Note that this is only relevant if you&#39;re building your own <code>CPANPLUS::Dist::*</code> plugin -- the built-in dist types already have this taken care of.</p>
+
+<h1 id="BUG-REPORTS">BUG REPORTS</h1>
+
+<p>Please report bugs or other issues to &lt;bug-cpanplus@rt.cpan.org&lt;gt&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>This module by Jos Boumans &lt;kane@cpan.org&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>The CPAN++ interface (of which this module is a part of) is copyright (c) 2001 - 2007, Jos Boumans &lt;kane@cpan.org&gt;. All rights reserved.</p>
+
+<p>This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

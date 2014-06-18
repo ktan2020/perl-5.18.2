@@ -1,0 +1,135 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#EXAMPLES">EXAMPLES</a></li>
+  <li><a href="#LIMITATIONS">LIMITATIONS</a></li>
+  <li><a href="#MAINTAINER">MAINTAINER</a></li>
+  <li><a href="#HISTORY">HISTORY</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Text::Soundex - Implementation of the soundex algorithm.</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>  use Text::Soundex;
+
+  # Original algorithm.
+  $code = soundex($name);    # Get the soundex code for a name.
+  @codes = soundex(@names);  # Get the list of codes for a list of names.
+
+  # American Soundex variant (NARA) - Used for US census data.
+  $code = soundex_nara($name);    # Get the soundex code for a name.
+  @codes = soundex_nara(@names);  # Get the list of codes for a list of names.
+
+  # Redefine the value that soundex() will return if the input string
+  # contains no identifiable sounds within it.
+  $Text::Soundex::nocode = &#39;Z000&#39;;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Soundex is a phonetic algorithm for indexing names by sound, as pronounced in English. The goal is for names with the same pronunciation to be encoded to the same representation so that they can be matched despite minor differences in spelling. Soundex is the most widely known of all phonetic algorithms and is often used (incorrectly) as a synonym for &quot;phonetic algorithm&quot;. Improvements to Soundex are the basis for many modern phonetic algorithms. (Wikipedia, 2007)</p>
+
+<p>This module implements the original soundex algorithm developed by Robert Russell and Margaret Odell, patented in 1918 and 1922, as well as a variation called &quot;American Soundex&quot; used for US census data, and current maintained by the National Archives and Records Administration (NARA).</p>
+
+<p>The soundex algorithm may be recognized from Donald Knuth&#39;s <b>The Art of Computer Programming</b>. The algorithm described by Knuth is the NARA algorithm.</p>
+
+<p>The value returned for strings which have no soundex encoding is defined using <code>$Text::Soundex::nocode</code>. The default value is <code>undef</code>, however values such as <code>&#39;Z000&#39;</code> are commonly used alternatives.</p>
+
+<p>For backward compatibility with older versions of this module the <code>$Text::Soundex::nocode</code> is exported into the caller&#39;s namespace as <code>$soundex_nocode</code>.</p>
+
+<p>In scalar context, <code>soundex()</code> returns the soundex code of its first argument. In list context, a list is returned in which each element is the soundex code for the corresponding argument passed to <code>soundex()</code>. For example, the following code assigns @codes the value <code>(&#39;M200&#39;, &#39;S320&#39;)</code>:</p>
+
+<pre><code>   @codes = soundex qw(Mike Stok);</code></pre>
+
+<p>To use <code>Text::Soundex</code> to generate codes that can be used to search one of the publically available US Censuses, a variant of the soundex algorithm must be used:</p>
+
+<pre><code>    use Text::Soundex;
+    $code = soundex_nara($name);</code></pre>
+
+<p>An example of where these algorithm differ follows:</p>
+
+<pre><code>    use Text::Soundex;
+    print soundex(&quot;Ashcraft&quot;), &quot;\n&quot;;       # prints: A226
+    print soundex_nara(&quot;Ashcraft&quot;), &quot;\n&quot;;  # prints: A261</code></pre>
+
+<h1 id="EXAMPLES">EXAMPLES</h1>
+
+<p>Donald Knuth&#39;s examples of names and the soundex codes they map to are listed below:</p>
+
+<pre><code>  Euler, Ellery -&gt; E460
+  Gauss, Ghosh -&gt; G200
+  Hilbert, Heilbronn -&gt; H416
+  Knuth, Kant -&gt; K530
+  Lloyd, Ladd -&gt; L300
+  Lukasiewicz, Lissajous -&gt; L222</code></pre>
+
+<p>so:</p>
+
+<pre><code>  $code = soundex &#39;Knuth&#39;;         # $code contains &#39;K530&#39;
+  @list = soundex qw(Lloyd Gauss); # @list contains &#39;L300&#39;, &#39;G200&#39;</code></pre>
+
+<h1 id="LIMITATIONS">LIMITATIONS</h1>
+
+<p>As the soundex algorithm was originally used a <b>long</b> time ago in the US it considers only the English alphabet and pronunciation. In particular, non-ASCII characters will be ignored. The recommended method of dealing with characters that have accents, or other unicode characters, is to use the Text::Unidecode module available from CPAN. Either use the module explicitly:</p>
+
+<pre><code>    use Text::Soundex;
+    use Text::Unidecode;
+
+    print soundex(unidecode(&quot;Fran\xE7ais&quot;)), &quot;\n&quot;; # Prints &quot;F652\n&quot;</code></pre>
+
+<p>Or use the convenient wrapper routine:</p>
+
+<pre><code>    use Text::Soundex &#39;soundex_unicode&#39;;
+
+    print soundex_unicode(&quot;Fran\xE7ais&quot;), &quot;\n&quot;;    # Prints &quot;F652\n&quot;</code></pre>
+
+<p>Since the soundex algorithm maps a large space (strings of arbitrary length) onto a small space (single letter plus 3 digits) no inference can be made about the similarity of two strings which end up with the same soundex code. For example, both <code>Hilbert</code> and <code>Heilbronn</code> end up with a soundex code of <code>H416</code>.</p>
+
+<h1 id="MAINTAINER">MAINTAINER</h1>
+
+<p>This module is currently maintain by Mark Mielke (<code>mark@mielke.cc</code>).</p>
+
+<h1 id="HISTORY">HISTORY</h1>
+
+<p>Version 3 is a significant update to provide support for versions of Perl later than Perl 5.004. Specifically, the XS version of the soundex() subroutine understands strings that are encoded using UTF-8 (unicode strings).</p>
+
+<p>Version 2 of this module was a re-write by Mark Mielke (<code>mark@mielke.cc</code>) to improve the speed of the subroutines. The XS version of the soundex() subroutine was introduced in 2.00.</p>
+
+<p>Version 1 of this module was written by Mike Stok (<code>mike@stok.co.uk</code>) and was included into the Perl core library set.</p>
+
+<p>Dave Carlsen (<code>dcarlsen@csranet.com</code>) made the request for the NARA algorithm to be included. The NARA soundex page can be viewed at: <code>http://www.nara.gov/genealogy/soundex/soundex.html</code></p>
+
+<p>Ian Phillips (<code>ian@pipex.net</code>) and Rich Pinder (<code>rpinder@hsc.usc.edu</code>) supplied ideas and spotted mistakes for v1.x.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

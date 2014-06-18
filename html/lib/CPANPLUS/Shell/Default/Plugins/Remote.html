@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#BUG-REPORTS">BUG REPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Shell::Default::Plugins::Remote - connect to a remote CPANPLUS</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    CPAN Terminal&gt; /connect localhost 1337 --user=foo --pass=bar
+    ...
+    CPAN Terminal@localhost&gt; /disconnect</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a <code>CPANPLUS::Shell::Default</code> plugin that allows you to connect to a machine running an instance of <code>CPANPLUS::Daemon</code>, allowing remote usage of the <code>CPANPLUS Shell</code>.</p>
+
+<p>A sample session, updating all modules on a remote machine, might look like this:</p>
+
+<pre><code>    CPAN Terminal&gt; /connect --user=my_user --pass=secret localhost 1337
+
+    Connection accepted
+
+    Successfully connected to &#39;localhost&#39; on port &#39;11337&#39;
+
+    Note that no output will appear until a command has completed
+    -- this may take a while
+
+
+    CPAN Terminal@localhost&gt; o; i *
+
+    [....]
+
+    CPAN Terminal@localhost&gt; /disconnect
+
+    CPAN Terminal&gt;</code></pre>
+
+<h1 id="BUG-REPORTS">BUG REPORTS</h1>
+
+<p>Please report bugs or other issues to &lt;bug-cpanplus@rt.cpan.org&lt;gt&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>This module by Jos Boumans &lt;kane@cpan.org&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>The CPAN++ interface (of which this module is a part of) is copyright (c) 2001 - 2007, Jos Boumans &lt;kane@cpan.org&gt;. All rights reserved.</p>
+
+<p>This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="file:/c|/perl/html/lib/CPANPLUS/Shell/Default.html">CPANPLUS::Shell::Default</a>, <a href="file:/c|/perl/html/lib/CPANPLUS/Shell.html">CPANPLUS::Shell</a>, <a href="file:/c|/perl/html/utils/cpanp.html">cpanp</a></p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,187 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>warnings - Perl pragma to control optional warnings</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use warnings;
+    no warnings;
+
+    use warnings &quot;all&quot;;
+    no warnings &quot;all&quot;;
+
+    use warnings::register;
+    if (warnings::enabled()) {
+        warnings::warn(&quot;some warning&quot;);
+    }
+
+    if (warnings::enabled(&quot;void&quot;)) {
+        warnings::warn(&quot;void&quot;, &quot;some warning&quot;);
+    }
+
+    if (warnings::enabled($object)) {
+        warnings::warn($object, &quot;some warning&quot;);
+    }
+
+    warnings::warnif(&quot;some warning&quot;);
+    warnings::warnif(&quot;void&quot;, &quot;some warning&quot;);
+    warnings::warnif($object, &quot;some warning&quot;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>The <code>warnings</code> pragma is a replacement for the command line flag <code>-w</code>, but the pragma is limited to the enclosing block, while the flag is global. See <a href="file:/c|/perl/html/pod/perllexwarn.html">perllexwarn</a> for more information and the list of built-in warning categories.</p>
+
+<p>If no import list is supplied, all possible warnings are either enabled or disabled.</p>
+
+<p>A number of functions are provided to assist module authors.</p>
+
+<dl>
+
+<dt id="use-warnings::register">use warnings::register</dt>
+<dd>
+
+<p>Creates a new warnings category with the same name as the package where the call to the pragma is used.</p>
+
+</dd>
+<dt id="warnings::enabled">warnings::enabled()</dt>
+<dd>
+
+<p>Use the warnings category with the same name as the current package.</p>
+
+<p>Return TRUE if that warnings category is enabled in the calling module. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::enabled-category">warnings::enabled($category)</dt>
+<dd>
+
+<p>Return TRUE if the warnings category, <code>$category</code>, is enabled in the calling module. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::enabled-object">warnings::enabled($object)</dt>
+<dd>
+
+<p>Use the name of the class for the object reference, <code>$object</code>, as the warnings category.</p>
+
+<p>Return TRUE if that warnings category is enabled in the first scope where the object is used. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::fatal_enabled">warnings::fatal_enabled()</dt>
+<dd>
+
+<p>Return TRUE if the warnings category with the same name as the current package has been set to FATAL in the calling module. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::fatal_enabled-category">warnings::fatal_enabled($category)</dt>
+<dd>
+
+<p>Return TRUE if the warnings category <code>$category</code> has been set to FATAL in the calling module. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::fatal_enabled-object">warnings::fatal_enabled($object)</dt>
+<dd>
+
+<p>Use the name of the class for the object reference, <code>$object</code>, as the warnings category.</p>
+
+<p>Return TRUE if that warnings category has been set to FATAL in the first scope where the object is used. Otherwise returns FALSE.</p>
+
+</dd>
+<dt id="warnings::warn-message">warnings::warn($message)</dt>
+<dd>
+
+<p>Print <code>$message</code> to STDERR.</p>
+
+<p>Use the warnings category with the same name as the current package.</p>
+
+<p>If that warnings category has been set to &quot;FATAL&quot; in the calling module then die. Otherwise return.</p>
+
+</dd>
+<dt id="warnings::warn-category-message">warnings::warn($category, $message)</dt>
+<dd>
+
+<p>Print <code>$message</code> to STDERR.</p>
+
+<p>If the warnings category, <code>$category</code>, has been set to &quot;FATAL&quot; in the calling module then die. Otherwise return.</p>
+
+</dd>
+<dt id="warnings::warn-object-message">warnings::warn($object, $message)</dt>
+<dd>
+
+<p>Print <code>$message</code> to STDERR.</p>
+
+<p>Use the name of the class for the object reference, <code>$object</code>, as the warnings category.</p>
+
+<p>If that warnings category has been set to &quot;FATAL&quot; in the scope where <code>$object</code> is first used then die. Otherwise return.</p>
+
+</dd>
+<dt id="warnings::warnif-message">warnings::warnif($message)</dt>
+<dd>
+
+<p>Equivalent to:</p>
+
+<pre><code>    if (warnings::enabled())
+      { warnings::warn($message) }</code></pre>
+
+</dd>
+<dt id="warnings::warnif-category-message">warnings::warnif($category, $message)</dt>
+<dd>
+
+<p>Equivalent to:</p>
+
+<pre><code>    if (warnings::enabled($category))
+      { warnings::warn($category, $message) }</code></pre>
+
+</dd>
+<dt id="warnings::warnif-object-message">warnings::warnif($object, $message)</dt>
+<dd>
+
+<p>Equivalent to:</p>
+
+<pre><code>    if (warnings::enabled($object))
+      { warnings::warn($object, $message) }</code></pre>
+
+</dd>
+<dt id="warnings::register_categories-names">warnings::register_categories(@names)</dt>
+<dd>
+
+<p>This registers warning categories for the given names and is primarily for use by the warnings::register pragma, for which see <a href="file:/c|/perl/html/pod/perllexwarn.html">perllexwarn</a>.</p>
+
+</dd>
+</dl>
+
+<p>See <a href="file:/c|/perl/html/pod/perlmodlib.html#Pragmatic-Modules">&quot;Pragmatic Modules&quot; in perlmodlib</a> and <a href="file:/c|/perl/html/pod/perllexwarn.html">perllexwarn</a>.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

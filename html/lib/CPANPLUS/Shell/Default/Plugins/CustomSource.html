@@ -1,0 +1,76 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Shell::Default::Plugins::CustomSource - add custom sources to CPANPLUS</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    ### elaborate help text
+    CPAN Terminal&gt; /? cs
+
+    ### add a new custom source
+    CPAN Terminal&gt; /cs --add file:///path/to/releases
+
+    ### list all your custom sources by
+    CPAN Terminal&gt; /cs --list
+
+    ### display the contents of a custom source by URI or ID
+    CPAN Terminal&gt; /cs --contents file:///path/to/releases
+    CPAN Terminal&gt; /cs --contents 1
+
+    ### Update a custom source by URI or ID
+    CPAN Terminal&gt; /cs --update file:///path/to/releases
+    CPAN Terminal&gt; /cs --update 1
+
+    ### Remove a custom source by URI or ID
+    CPAN Terminal&gt; /cs --remove file:///path/to/releases
+    CPAN Terminal&gt; /cs --remove 1
+
+    ### Write an index file for a custom source, to share
+    ### with 3rd parties or remote users
+    CPAN Terminal&gt; /cs --write file:///path/to/releases
+
+    ### Make sure to save your sources when adding/removing
+    ### sources, so your changes are reflected in the cache:
+    CPAN Terminal&gt; x</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This is a <code>CPANPLUS::Shell::Default</code> plugin that can add custom sources to your CPANPLUS installation. This is a wrapper around the <code>custom module sources</code> code as outlined in <a href="file:/c|/perl/html/lib/CPANPLUS/Backend.html#CUSTOM-MODULE-SOURCES">&quot;CUSTOM MODULE SOURCES&quot; in CPANPLUS::Backend</a>.</p>
+
+<p>This allows you to extend your index of available modules beyond what&#39;s available on <code>CPAN</code> with your own local distributions, or ones offered by third parties.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,218 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#KNOWN-BUGS">KNOWN BUGS</a></li>
+  <li><a href="#SUGGESTED-ADDITIONS">SUGGESTED ADDITIONS</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>List::Util - A selection of general-utility list subroutines</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use List::Util qw(first max maxstr min minstr reduce shuffle sum);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>List::Util</code> contains a selection of subroutines that people have expressed would be nice to have in the perl core, but the usage would not really be high enough to warrant the use of a keyword, and the size so small such that being individual extensions would be wasteful.</p>
+
+<p>By default <code>List::Util</code> does not export any subroutines. The subroutines defined are</p>
+
+<dl>
+
+<dt id="first-BLOCK-LIST">first BLOCK LIST</dt>
+<dd>
+
+<p>Similar to <code>grep</code> in that it evaluates BLOCK setting <code>$_</code> to each element of LIST in turn. <code>first</code> returns the first element where the result from BLOCK is a true value. If BLOCK never returns true or LIST was empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = first { defined($_) } @list    # first defined value in @list
+    $foo = first { $_ &gt; $value } @list    # first value in @list which
+                                          # is greater than $value</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { defined($a) ? $a : wanted($b) ? $b : undef } undef, @list</code></pre>
+
+<p>for example wanted() could be defined() which would return the first defined value in @list</p>
+
+</dd>
+<dt id="max-LIST">max LIST</dt>
+<dd>
+
+<p>Returns the entry in the list with the highest numerical value. If the list is empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = max 1..10                # 10
+    $foo = max 3,9,12               # 12
+    $foo = max @bar, @baz           # whatever</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { $a &gt; $b ? $a : $b } 1..10</code></pre>
+
+</dd>
+<dt id="maxstr-LIST">maxstr LIST</dt>
+<dd>
+
+<p>Similar to <code>max</code>, but treats all the entries in the list as strings and returns the highest string as defined by the <code>gt</code> operator. If the list is empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = maxstr &#39;A&#39;..&#39;Z&#39;          # &#39;Z&#39;
+    $foo = maxstr &quot;hello&quot;,&quot;world&quot;   # &quot;world&quot;
+    $foo = maxstr @bar, @baz        # whatever</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { $a gt $b ? $a : $b } &#39;A&#39;..&#39;Z&#39;</code></pre>
+
+</dd>
+<dt id="min-LIST">min LIST</dt>
+<dd>
+
+<p>Similar to <code>max</code> but returns the entry in the list with the lowest numerical value. If the list is empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = min 1..10                # 1
+    $foo = min 3,9,12               # 3
+    $foo = min @bar, @baz           # whatever</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { $a &lt; $b ? $a : $b } 1..10</code></pre>
+
+</dd>
+<dt id="minstr-LIST">minstr LIST</dt>
+<dd>
+
+<p>Similar to <code>min</code>, but treats all the entries in the list as strings and returns the lowest string as defined by the <code>lt</code> operator. If the list is empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = minstr &#39;A&#39;..&#39;Z&#39;          # &#39;A&#39;
+    $foo = minstr &quot;hello&quot;,&quot;world&quot;   # &quot;hello&quot;
+    $foo = minstr @bar, @baz        # whatever</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { $a lt $b ? $a : $b } &#39;A&#39;..&#39;Z&#39;</code></pre>
+
+</dd>
+<dt id="reduce-BLOCK-LIST">reduce BLOCK LIST</dt>
+<dd>
+
+<p>Reduces LIST by calling BLOCK, in a scalar context, multiple times, setting <code>$a</code> and <code>$b</code> each time. The first call will be with <code>$a</code> and <code>$b</code> set to the first two elements of the list, subsequent calls will be done by setting <code>$a</code> to the result of the previous call and <code>$b</code> to the next element in the list.</p>
+
+<p>Returns the result of the last call to BLOCK. If LIST is empty then <code>undef</code> is returned. If LIST only contains one element then that element is returned and BLOCK is not executed.</p>
+
+<pre><code>    $foo = reduce { $a &lt; $b ? $a : $b } 1..10       # min
+    $foo = reduce { $a lt $b ? $a : $b } &#39;aa&#39;..&#39;zz&#39; # minstr
+    $foo = reduce { $a + $b } 1 .. 10               # sum
+    $foo = reduce { $a . $b } @bar                  # concat</code></pre>
+
+<p>If your algorithm requires that <code>reduce</code> produce an identity value, then make sure that you always pass that identity value as the first argument to prevent <code>undef</code> being returned</p>
+
+<pre><code>  $foo = reduce { $a + $b } 0, @values;             # sum with 0 identity value</code></pre>
+
+</dd>
+<dt id="shuffle-LIST">shuffle LIST</dt>
+<dd>
+
+<p>Returns the elements of LIST in a random order</p>
+
+<pre><code>    @cards = shuffle 0..51      # 0..51 in a random order</code></pre>
+
+</dd>
+<dt id="sum-LIST">sum LIST</dt>
+<dd>
+
+<p>Returns the sum of all the elements in LIST. If LIST is empty then <code>undef</code> is returned.</p>
+
+<pre><code>    $foo = sum 1..10                # 55
+    $foo = sum 3,9,12               # 24
+    $foo = sum @bar, @baz           # whatever</code></pre>
+
+<p>This function could be implemented using <code>reduce</code> like this</p>
+
+<pre><code>    $foo = reduce { $a + $b } 1..10</code></pre>
+
+<p>If your algorithm requires that <code>sum</code> produce an identity of 0, then make sure that you always pass <code>0</code> as the first argument to prevent <code>undef</code> being returned</p>
+
+<pre><code>  $foo = sum 0, @values;</code></pre>
+
+</dd>
+<dt id="sum0-LIST">sum0 LIST</dt>
+<dd>
+
+<p>Similar to <code>sum</code>, except this returns 0 when given an empty list, rather than <code>undef</code>.</p>
+
+</dd>
+</dl>
+
+<h1 id="KNOWN-BUGS">KNOWN BUGS</h1>
+
+<p>With perl versions prior to 5.005 there are some cases where reduce will return an incorrect result. This will show up as test 7 of reduce.t failing.</p>
+
+<h1 id="SUGGESTED-ADDITIONS">SUGGESTED ADDITIONS</h1>
+
+<p>The following are additions that have been requested, but I have been reluctant to add due to them being very simple to implement in perl</p>
+
+<pre><code>  # One argument is true
+
+  sub any { $_ &amp;&amp; return 1 for @_; 0 }
+
+  # All arguments are true
+
+  sub all { $_ || return 0 for @_; 1 }
+
+  # All arguments are false
+
+  sub none { $_ &amp;&amp; return 0 for @_; 1 }
+
+  # One argument is false
+
+  sub notall { $_ || return 1 for @_; 0 }
+
+  # How many elements are true
+
+  sub true { scalar grep { $_ } @_ }
+
+  # How many elements are false
+
+  sub false { scalar grep { !$_ } @_ }</code></pre>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="file:/c|/perl/html/lib/Scalar/Util.html">Scalar::Util</a>, <a>List::MoreUtils</a></p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>Copyright (c) 1997-2007 Graham Barr &lt;gbarr@pobox.com&gt;. All rights reserved. This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

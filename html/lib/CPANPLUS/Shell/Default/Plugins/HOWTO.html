@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#HOWTO">HOWTO</a>
+    <ul>
+      <li><a href="#Registering-Plugin-Modules">Registering Plugin Modules</a></li>
+      <li><a href="#Registering-Plugin-Commands">Registering Plugin Commands</a></li>
+      <li><a href="#Registering-Plugin-Help">Registering Plugin Help</a></li>
+      <li><a href="#Arguments-to-Plugin-Commands">Arguments to Plugin Commands</a></li>
+    </ul>
+  </li>
+  <li><a href="#BUG-REPORTS">BUG REPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+  <li><a href="#SEE-ALSO">SEE ALSO</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Shell::Default::Plugins::HOWTO -- documentation on how to write your own plugins</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    package CPANPLUS::Shell::Default::Plugins::MyPlugin;
+
+    ### return command =&gt; method mapping
+    sub plugins { ( myplugin1 =&gt; &#39;mp1&#39;, myplugin2 =&gt; &#39;mp2&#39; ) }
+
+    ### method called when the command &#39;/myplugin1&#39; is issued
+    sub mp1 { .... }
+
+    ### method called when the command &#39;/? myplugin1&#39; is issued
+    sub mp1_help { return &quot;Help Text&quot; }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>This pod text explains how to write your own plugins for <code>CPANPLUS::Shell::Default</code>.</p>
+
+<h1 id="HOWTO">HOWTO</h1>
+
+<h2 id="Registering-Plugin-Modules">Registering Plugin Modules</h2>
+
+<p>Plugins are detected by using <code>Module::Pluggable</code>. Every module in the <code>CPANPLUS::Shell::Default::Plugins::*</code> namespace is considered a plugin, and is attempted to be loaded.</p>
+
+<p>Therefor, any plugin must be declared in that namespace, in a corresponding <code>.pm</code> file.</p>
+
+<h2 id="Registering-Plugin-Commands">Registering Plugin Commands</h2>
+
+<p>To register any plugin commands, a list of key value pairs must be returned by a <code>plugins</code> method in your package. The keys are the commands you wish to register, the values are the methods in the plugin package you wish to have called when the command is issued.</p>
+
+<p>For example, a simple &#39;Hello, World!&#39; plugin:</p>
+
+<pre><code>    package CPANPLUS::Shell::Default::Plugins::HW;
+
+    sub plugins { return ( helloworld =&gt; &#39;hw&#39; ) };
+
+    sub hw { print &quot;Hello, world!\n&quot; }</code></pre>
+
+<p>When the user in the default shell now issues the <code>/helloworld</code> command, this command will be dispatched to the plugin, and its <code>hw</code> method will be called</p>
+
+<h2 id="Registering-Plugin-Help">Registering Plugin Help</h2>
+
+<p>To provide usage information for your plugin, the user of the default shell can type <code>/? PLUGIN_COMMAND</code>. In that case, the function <code>PLUGIN_COMMAND_help</code> will be called in your plugin package.</p>
+
+<p>For example, extending the above example, when a user calls <code>/? helloworld</code>, the function <code>hw_help</code> will be called, which might look like this:</p>
+
+<pre><code>    sub hw_help { &quot;    /helloworld      # prints &quot;Hello, world!\n&quot; }</code></pre>
+
+<p>If you dont provide a corresponding _help function to your commands, the default shell will handle it gracefully, but the user will be stuck without usage information on your commands, so it&#39;s considered undesirable to omit the help functions.</p>
+
+<h2 id="Arguments-to-Plugin-Commands">Arguments to Plugin Commands</h2>
+
+<p>Any plugin function will receive the following arguments when called, which are all positional:</p>
+
+<dl>
+
+<dt id="Classname----The-name-of-your-plugin-class">Classname -- The name of your plugin class</dt>
+<dd>
+
+</dd>
+<dt id="Shell----The-CPANPLUS::Shell::Default-object">Shell -- The CPANPLUS::Shell::Default object</dt>
+<dd>
+
+</dd>
+<dt id="Backend----The-CPANPLUS::Backend-object">Backend -- The CPANPLUS::Backend object</dt>
+<dd>
+
+</dd>
+<dt id="Command----The-command-issued-by-the-user">Command -- The command issued by the user</dt>
+<dd>
+
+</dd>
+<dt id="Input----The-input-string-from-the-user">Input -- The input string from the user</dt>
+<dd>
+
+</dd>
+<dt id="Options----A-hashref-of-options-provided-by-the-user">Options -- A hashref of options provided by the user</dt>
+<dd>
+
+</dd>
+</dl>
+
+<p>For example, the following command:</p>
+
+<pre><code>    /helloworld bob --nofoo --bar=2 joe</code></pre>
+
+<p>Would yield the following arguments:</p>
+
+<pre><code>    sub hw {
+        my $class   = shift;    # CPANPLUS::Shell::Default::Plugins::HW
+        my $shell   = shift;    # CPANPLUS::Shell::Default object
+        my $cb      = shift;    # CPANPLUS::Backend object
+        my $cmd     = shift;    # &#39;helloworld&#39;
+        my $input   = shift;    # &#39;bob joe&#39;
+        my $opts    = shift;    # { foo =&gt; 0, bar =&gt; 2 }
+
+        ....
+    }</code></pre>
+
+<h1 id="BUG-REPORTS">BUG REPORTS</h1>
+
+<p>Please report bugs or other issues to &lt;bug-cpanplus@rt.cpan.org&lt;gt&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>This module by Jos Boumans &lt;kane@cpan.org&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>The CPAN++ interface (of which this module is a part of) is copyright (c) 2001 - 2007, Jos Boumans &lt;kane@cpan.org&gt;. All rights reserved.</p>
+
+<p>This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.</p>
+
+<h1 id="SEE-ALSO">SEE ALSO</h1>
+
+<p><a href="file:/c|/perl/html/lib/CPANPLUS/Shell/Default.html">CPANPLUS::Shell::Default</a>, <a href="file:/c|/perl/html/lib/CPANPLUS/Shell.html">CPANPLUS::Shell</a>, <a href="file:/c|/perl/html/utils/cpanp.html">cpanp</a></p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

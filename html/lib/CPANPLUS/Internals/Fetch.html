@@ -1,0 +1,103 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a></li>
+  <li><a href="#path-_fetch-module-modobj-fetchdir-path-to-save-to-fetch_from-scheme:-path-to-fetch-from-verbose-BOOL-force-BOOL-prefer_bin-BOOL-ttl-seconds">$path = _fetch( module =&gt; $modobj, [fetchdir =&gt; &#39;/path/to/save/to&#39;, fetch_from =&gt; &#39;scheme://path/to/fetch/from&#39;, verbose =&gt; BOOL, force =&gt; BOOL, prefer_bin =&gt; BOOL, ttl =&gt; $seconds] )</a>
+    <ul>
+      <li><a href="#add_fail_host-host-host_hashref">_add_fail_host( host =&gt; $host_hashref )</a></li>
+      <li><a href="#host_ok-host-host_hashref">_host_ok( host =&gt; $host_hashref )</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Internals::Fetch - internals for fetching files</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    my $output = $cb-&gt;_fetch(
+                        module      =&gt; $modobj,
+                        fetchdir    =&gt; &#39;/path/to/save/to&#39;,
+                        verbose     =&gt; BOOL,
+                        force       =&gt; BOOL,
+                    );
+
+    $cb-&gt;_add_fail_host( host =&gt; &#39;foo.com&#39; );
+    $cb-&gt;_host_ok(       host =&gt; &#39;foo.com&#39; );</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>CPANPLUS::Internals::Fetch fetches files from either ftp, http, file or rsync mirrors.</p>
+
+<p>This is the rough flow:</p>
+
+<pre><code>    $cb-&gt;_fetch
+        Delegate to File::Fetch;</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h1 id="path-_fetch-module-modobj-fetchdir-path-to-save-to-fetch_from-scheme:-path-to-fetch-from-verbose-BOOL-force-BOOL-prefer_bin-BOOL-ttl-seconds">$path = _fetch( module =&gt; $modobj, [fetchdir =&gt; &#39;/path/to/save/to&#39;, fetch_from =&gt; &#39;scheme://path/to/fetch/from&#39;, verbose =&gt; BOOL, force =&gt; BOOL, prefer_bin =&gt; BOOL, ttl =&gt; $seconds] )</h1>
+
+<p><code>_fetch</code> will fetch files based on the information in a module object. You always need a module object. If you want a fake module object for a one-off fetch, look at <code>CPANPLUS::Module::Fake</code>.</p>
+
+<p><code>fetchdir</code> is the place to save the file to. Usually this information comes from your configuration, but you can override it expressly if needed.</p>
+
+<p><code>fetch_from</code> lets you specify an URI to get this file from. If you do not specify one, your list of configured hosts will be probed to download the file from.</p>
+
+<p><code>force</code> forces a new download, even if the file already exists.</p>
+
+<p><code>verbose</code> simply indicates whether or not to print extra messages.</p>
+
+<p><code>prefer_bin</code> indicates whether you prefer the use of commandline programs over perl modules. Defaults to your corresponding config setting.</p>
+
+<p><code>ttl</code> (in seconds) indicates how long a cached copy is valid for. If the fetch time of the local copy is within the ttl, the cached copy is returned. Otherwise, the file is refetched.</p>
+
+<p><code>_fetch</code> figures out, based on the host list, what scheme to use and from there, delegates to <code>File::Fetch</code> do the actual fetching.</p>
+
+<p>Returns the path of the output file on success, false on failure.</p>
+
+<p>Note that you can set a <code>blacklist</code> on certain methods in the config. Simply add the identifying name of the method (ie, <code>lwp</code>) to: $conf-&gt;_set_fetch( blacklist =&gt; [&#39;lwp&#39;] );</p>
+
+<p>And the <code>LWP</code> function will be skipped by <code>File::Fetch</code>.</p>
+
+<h2 id="add_fail_host-host-host_hashref">_add_fail_host( host =&gt; $host_hashref )</h2>
+
+<p>Mark a particular host as bad. This makes <code>CPANPLUS::Internals::Fetch</code> skip it in fetches until this cache is flushed.</p>
+
+<h2 id="host_ok-host-host_hashref">_host_ok( host =&gt; $host_hashref )</h2>
+
+<p>Query the cache to see if this host is ok, or if it has been flagged as bad.</p>
+
+<p>Returns true if the host is ok, false otherwise.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

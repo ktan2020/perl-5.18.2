@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#list_packages-package-name">list_packages &lt;package name&gt;</a></li>
+    </ul>
+  </li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYING">COPYING</a></li>
+  <li><a href="#BUGS">BUGS</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Devel::InnerPackage - find all the inner packages of a package</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    use Foo::Bar;
+    use Devel::InnerPackage qw(list_packages);
+
+    my @inner_packages = list_packages(&#39;Foo::Bar&#39;);</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p>Given a file like this</p>
+
+<pre><code>    package Foo::Bar;
+
+    sub foo {}
+
+
+    package Foo::Bar::Quux;
+
+    sub quux {}
+
+    package Foo::Bar::Quirka;
+
+    sub quirka {}
+
+    1;</code></pre>
+
+<p>then</p>
+
+<pre><code>    list_packages(&#39;Foo::Bar&#39;);</code></pre>
+
+<p>will return</p>
+
+<pre><code>    Foo::Bar::Quux
+    Foo::Bar::Quirka</code></pre>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="list_packages-package-name">list_packages &lt;package name&gt;</h2>
+
+<p>Return a list of all inner packages of that package.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>Simon Wistow &lt;simon@thegestalt.org&gt;</p>
+
+<h1 id="COPYING">COPYING</h1>
+
+<p>Copyright, 2005 Simon Wistow</p>
+
+<p>Distributed under the same terms as Perl itself.</p>
+
+<h1 id="BUGS">BUGS</h1>
+
+<p>None known.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,129 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#ACCESSORS">ACCESSORS</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#auth-CPANPLUS::Module::Author-new-author-AUTHOR_NAME-cpanid-CPAN_ID-_id-INTERNALS_ID-email-AUTHOR_EMAIL">$auth = CPANPLUS::Module::Author-&gt;new( author =&gt; AUTHOR_NAME, cpanid =&gt; CPAN_ID, _id =&gt; INTERNALS_ID [, email =&gt; AUTHOR_EMAIL] )</a></li>
+      <li><a href="#mod_objs-auth-modules">@mod_objs = $auth-&gt;modules()</a></li>
+      <li><a href="#dists-auth-distributions">@dists = $auth-&gt;distributions()</a></li>
+    </ul>
+  </li>
+  <li><a href="#CLASS-METHODS">CLASS METHODS</a>
+    <ul>
+      <li><a href="#accessors">accessors ()</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>CPANPLUS::Module::Author - CPAN author object for CPANPLUS</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    my $author = CPANPLUS::Module::Author-&gt;new(
+                    author  =&gt; &#39;Jack Ashton&#39;,
+                    cpanid  =&gt; &#39;JACKASH&#39;,
+                    _id     =&gt; INTERNALS_OBJECT_ID,
+                );
+
+    $author-&gt;cpanid;
+    $author-&gt;author;
+    $author-&gt;email;
+
+    @dists  = $author-&gt;distributions;
+    @mods   = $author-&gt;modules;
+
+    @accessors = CPANPLUS::Module::Author-&gt;accessors;</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>CPANPLUS::Module::Author</code> creates objects from the information in the source files. These can then be used to query on.</p>
+
+<p>These objects should only be created internally. For <code>fake</code> objects, there&#39;s the <code>CPANPLUS::Module::Author::Fake</code> class.</p>
+
+<h1 id="ACCESSORS">ACCESSORS</h1>
+
+<p>An objects of this class has the following accessors:</p>
+
+<dl>
+
+<dt id="author">author</dt>
+<dd>
+
+<p>Name of the author.</p>
+
+</dd>
+<dt id="cpanid">cpanid</dt>
+<dd>
+
+<p>The CPAN id of the author.</p>
+
+</dd>
+<dt id="email">email</dt>
+<dd>
+
+<p>The email address of the author, which defaults to &#39;&#39; if not provided.</p>
+
+</dd>
+<dt id="parent">parent</dt>
+<dd>
+
+<p>The <code>CPANPLUS::Internals::Object</code> that spawned this module object.</p>
+
+</dd>
+</dl>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="auth-CPANPLUS::Module::Author-new-author-AUTHOR_NAME-cpanid-CPAN_ID-_id-INTERNALS_ID-email-AUTHOR_EMAIL">$auth = CPANPLUS::Module::Author-&gt;new( author =&gt; AUTHOR_NAME, cpanid =&gt; CPAN_ID, _id =&gt; INTERNALS_ID [, email =&gt; AUTHOR_EMAIL] )</h2>
+
+<p>This method returns a <code>CPANPLUS::Module::Author</code> object, based on the given parameters.</p>
+
+<p>Returns false on failure.</p>
+
+<h2 id="mod_objs-auth-modules">@mod_objs = $auth-&gt;modules()</h2>
+
+<p>Return a list of module objects this author has released.</p>
+
+<h2 id="dists-auth-distributions">@dists = $auth-&gt;distributions()</h2>
+
+<p>Returns a list of module objects representing all the distributions this author has released.</p>
+
+<h1 id="CLASS-METHODS">CLASS METHODS</h1>
+
+<h2 id="accessors">accessors ()</h2>
+
+<p>Returns a list of all accessor methods to the object</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+

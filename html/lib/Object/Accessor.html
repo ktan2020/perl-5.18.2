@@ -1,0 +1,372 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:" />
+</head>
+
+<body style="background-color: white">
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+
+
+<ul id="index">
+  <li><a href="#NAME">NAME</a></li>
+  <li><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li><a href="#METHODS">METHODS</a>
+    <ul>
+      <li><a href="#object-Object::Accessor-new-ARGS">$object = Object::Accessor-&gt;new( [ARGS] );</a></li>
+      <li><a href="#bool-object-mk_accessors-ACCESSORS-ACCESSOR_MAP">$bool = $object-&gt;mk_accessors( @ACCESSORS | \%ACCESSOR_MAP );</a></li>
+      <li><a href="#list-self-ls_accessors">@list = $self-&gt;ls_accessors;</a></li>
+      <li><a href="#ref-self-ls_allow-KEY">$ref = $self-&gt;ls_allow(KEY)</a></li>
+      <li><a href="#bool-self-mk_aliases-alias-method-alias2-method2">$bool = $self-&gt;mk_aliases( alias =&gt; method, [alias2 =&gt; method2, ...] );</a></li>
+      <li><a href="#clone-self-mk_clone">$clone = $self-&gt;mk_clone;</a></li>
+      <li><a href="#bool-self-mk_flush">$bool = $self-&gt;mk_flush;</a></li>
+      <li><a href="#bool-self-mk_verify">$bool = $self-&gt;mk_verify;</a></li>
+      <li><a href="#bool-self-register_callback-sub">$bool = $self-&gt;register_callback( sub { ... } );</a></li>
+      <li><a href="#bool-self-can-METHOD_NAME">$bool = $self-&gt;can( METHOD_NAME )</a></li>
+      <li><a href="#val-self-___get-METHOD_NAME">$val = $self-&gt;___get( METHOD_NAME );</a></li>
+      <li><a href="#bool-self-___set-METHOD_NAME-VALUE">$bool = $self-&gt;___set( METHOD_NAME =&gt; VALUE );</a></li>
+      <li><a href="#bool-self-___alias-ALIAS-METHOD">$bool = $self-&gt;___alias( ALIAS =&gt; METHOD );</a></li>
+    </ul>
+  </li>
+  <li><a href="#LVALUE-ACCESSORS">LVALUE ACCESSORS</a>
+    <ul>
+      <li><a href="#CAVEATS">CAVEATS</a></li>
+    </ul>
+  </li>
+  <li><a href="#GLOBAL-VARIABLES">GLOBAL VARIABLES</a>
+    <ul>
+      <li><a href="#Object::Accessor::FATAL">$Object::Accessor::FATAL</a></li>
+      <li><a href="#Object::Accessor::DEBUG">$Object::Accessor::DEBUG</a></li>
+    </ul>
+  </li>
+  <li><a href="#TODO">TODO</a>
+    <ul>
+      <li><a href="#Create-read-only-accessors">Create read-only accessors</a></li>
+    </ul>
+  </li>
+  <li><a href="#CAVEATS1">CAVEATS</a></li>
+  <li><a href="#BUG-REPORTS">BUG REPORTS</a></li>
+  <li><a href="#AUTHOR">AUTHOR</a></li>
+  <li><a href="#COPYRIGHT">COPYRIGHT</a></li>
+</ul>
+
+<h1 id="NAME">NAME</h1>
+
+<p>Object::Accessor - interface to create per object accessors</p>
+
+<h1 id="SYNOPSIS">SYNOPSIS</h1>
+
+<pre><code>    ### using the object
+    $obj = Object::Accessor-&gt;new;        # create object
+    $obj = Object::Accessor-&gt;new(@list); # create object with accessors
+    $obj = Object::Accessor-&gt;new(\%h);   # create object with accessors
+                                         # and their allow handlers
+
+    $bool   = $obj-&gt;mk_accessors(&#39;foo&#39;); # create accessors
+    $bool   = $obj-&gt;mk_accessors(        # create accessors with input
+               {foo =&gt; ALLOW_HANDLER} ); # validation
+
+    $bool   = $obj-&gt;mk_aliases(          # create an alias to an existing
+                alias_name =&gt; &#39;method&#39;); # method name
+
+    $clone  = $obj-&gt;mk_clone;            # create a clone of original
+                                         # object without data
+    $bool   = $obj-&gt;mk_flush;            # clean out all data
+
+    @list   = $obj-&gt;ls_accessors;        # retrieves a list of all
+                                         # accessors for this object
+
+    $bar    = $obj-&gt;foo(&#39;bar&#39;);          # set &#39;foo&#39; to &#39;bar&#39;
+    $bar    = $obj-&gt;foo();               # retrieve &#39;bar&#39; again
+
+    $sub    = $obj-&gt;can(&#39;foo&#39;);          # retrieve coderef for
+                                         # &#39;foo&#39; accessor
+    $bar    = $sub-&gt;(&#39;bar&#39;);             # set &#39;foo&#39; via coderef
+    $bar    = $sub-&gt;();                  # retrieve &#39;bar&#39; by coderef
+
+    ### using the object as base class
+    package My::Class;
+    use base &#39;Object::Accessor&#39;;
+
+    $obj    = My::Class-&gt;new;               # create base object
+    $bool   = $obj-&gt;mk_accessors(&#39;foo&#39;);    # create accessors, etc...
+
+    ### make all attempted access to non-existent accessors fatal
+    ### (defaults to false)
+    $Object::Accessor::FATAL = 1;
+
+    ### enable debugging
+    $Object::Accessor::DEBUG = 1;
+
+    ### advanced usage -- callbacks
+    {   my $obj = Object::Accessor-&gt;new(&#39;foo&#39;);
+        $obj-&gt;register_callback( sub { ... } );
+
+        $obj-&gt;foo( 1 ); # these calls invoke the callback you registered
+        $obj-&gt;foo()     # which allows you to change the get/set
+                        # behaviour and what is returned to the caller.
+    }
+
+    ### advanced usage -- lvalue attributes
+    {   my $obj = Object::Accessor::Lvalue-&gt;new(&#39;foo&#39;);
+        print $obj-&gt;foo = 1;            # will print 1
+    }
+
+    ### advanced usage -- scoped attribute values
+    {   my $obj = Object::Accessor-&gt;new(&#39;foo&#39;);
+
+        $obj-&gt;foo( 1 );
+        print $obj-&gt;foo;                # will print 1
+
+        ### bind the scope of the value of attribute &#39;foo&#39;
+        ### to the scope of &#39;$x&#39; -- when $x goes out of
+        ### scope, &#39;foo&#39;s previous value will be restored
+        {   $obj-&gt;foo( 2 =&gt; \my $x );
+            print $obj-&gt;foo, &#39; &#39;, $x;   # will print &#39;2 2&#39;
+        }
+        print $obj-&gt;foo;                # will print 1
+    }</code></pre>
+
+<h1 id="DESCRIPTION">DESCRIPTION</h1>
+
+<p><code>Object::Accessor</code> provides an interface to create per object accessors (as opposed to per <code>Class</code> accessors, as, for example, <code>Class::Accessor</code> provides).</p>
+
+<p>You can choose to either subclass this module, and thus using its accessors on your own module, or to store an <code>Object::Accessor</code> object inside your own object, and access the accessors from there. See the <code>SYNOPSIS</code> for examples.</p>
+
+<h1 id="METHODS">METHODS</h1>
+
+<h2 id="object-Object::Accessor-new-ARGS">$object = Object::Accessor-&gt;new( [ARGS] );</h2>
+
+<p>Creates a new (and empty) <code>Object::Accessor</code> object. This method is inheritable.</p>
+
+<p>Any arguments given to <code>new</code> are passed straight to <code>mk_accessors</code>.</p>
+
+<p>If you want to be able to assign to your accessors as if they were <code>lvalue</code>s, you should create your object in the <code>Object::Accessor::Lvalue</code> namespace instead. See the section on <code>LVALUE ACCESSORS</code> below.</p>
+
+<h2 id="bool-object-mk_accessors-ACCESSORS-ACCESSOR_MAP">$bool = $object-&gt;mk_accessors( @ACCESSORS | \%ACCESSOR_MAP );</h2>
+
+<p>Creates a list of accessors for this object (and <code>NOT</code> for other ones in the same class!). Will not clobber existing data, so if an accessor already exists, requesting to create again is effectively a <code>no-op</code>.</p>
+
+<p>When providing a <code>hashref</code> as argument, rather than a normal list, you can specify a list of key/value pairs of accessors and their respective input validators. The validators can be anything that <code>Params::Check</code>&#39;s <code>allow</code> function accepts. Please see its manpage for details.</p>
+
+<p>For example:</p>
+
+<pre><code>    $object-&gt;mk_accessors( {
+        foo     =&gt; qr/^\d+$/,       # digits only
+        bar     =&gt; [0,1],           # booleans
+        zot     =&gt; \&amp;my_sub         # a custom verification sub
+    } );</code></pre>
+
+<p>Returns true on success, false on failure.</p>
+
+<p>Accessors that are called on an object, that do not exist return <code>undef</code> by default, but you can make this a fatal error by setting the global variable <code>$FATAL</code> to true. See the section on <code>GLOBAL VARIABLES</code> for details.</p>
+
+<p>Note that you can bind the values of attributes to a scope. This allows you to <code>temporarily</code> change a value of an attribute, and have it&#39;s original value restored up on the end of it&#39;s bound variable&#39;s scope;</p>
+
+<p>For example, in this snippet of code, the attribute <code>foo</code> will temporarily be set to <code>2</code>, until the end of the scope of <code>$x</code>, at which point the original value of <code>1</code> will be restored.</p>
+
+<pre><code>    my $obj = Object::Accessor-&gt;new;
+
+    $obj-&gt;mk_accessors(&#39;foo&#39;);
+    $obj-&gt;foo( 1 );
+    print $obj-&gt;foo;                # will print 1
+
+    ### bind the scope of the value of attribute &#39;foo&#39;
+    ### to the scope of &#39;$x&#39; -- when $x goes out of
+    ### scope, &#39;foo&#39; previous value will be restored
+    {   $obj-&gt;foo( 2 =&gt; \my $x );
+        print $obj-&gt;foo, &#39; &#39;, $x;   # will print &#39;2 2&#39;
+    }
+    print $obj-&gt;foo;                # will print 1</code></pre>
+
+<p>Note that all accessors are read/write for everyone. See the <code>TODO</code> section for details.</p>
+
+<h2 id="list-self-ls_accessors">@list = $self-&gt;ls_accessors;</h2>
+
+<p>Returns a list of accessors that are supported by the current object. The corresponding coderefs can be retrieved by passing this list one by one to the <code>can</code> method.</p>
+
+<h2 id="ref-self-ls_allow-KEY">$ref = $self-&gt;ls_allow(KEY)</h2>
+
+<p>Returns the allow handler for the given key, which can be used with <code>Params::Check</code>&#39;s <code>allow()</code> handler. If there was no allow handler specified, an allow handler that always returns true will be returned.</p>
+
+<h2 id="bool-self-mk_aliases-alias-method-alias2-method2">$bool = $self-&gt;mk_aliases( alias =&gt; method, [alias2 =&gt; method2, ...] );</h2>
+
+<p>Creates an alias for a given method name. For all intents and purposes, these two accessors are now identical for this object. This is akin to doing the following on the symbol table level:</p>
+
+<pre><code>  *alias = *method</code></pre>
+
+<p>This allows you to do the following:</p>
+
+<pre><code>  $self-&gt;mk_accessors(&#39;foo&#39;);
+  $self-&gt;mk_aliases( bar =&gt; &#39;foo&#39; );
+
+  $self-&gt;bar( 42 );
+  print $self-&gt;foo;     # will print 42</code></pre>
+
+<h2 id="clone-self-mk_clone">$clone = $self-&gt;mk_clone;</h2>
+
+<p>Makes a clone of the current object, which will have the exact same accessors as the current object, but without the data stored in them.</p>
+
+<h2 id="bool-self-mk_flush">$bool = $self-&gt;mk_flush;</h2>
+
+<p>Flushes all the data from the current object; all accessors will be set back to their default state of <code>undef</code>.</p>
+
+<p>Returns true on success and false on failure.</p>
+
+<h2 id="bool-self-mk_verify">$bool = $self-&gt;mk_verify;</h2>
+
+<p>Checks if all values in the current object are in accordance with their own allow handler. Specifically useful to check if an empty initialised object has been filled with values satisfying their own allow criteria.</p>
+
+<h2 id="bool-self-register_callback-sub">$bool = $self-&gt;register_callback( sub { ... } );</h2>
+
+<p>This method allows you to register a callback, that is invoked every time an accessor is called. This allows you to munge input data, access external data stores, etc.</p>
+
+<p>You are free to return whatever you wish. On a <code>set</code> call, the data is even stored in the object.</p>
+
+<p>Below is an example of the use of a callback.</p>
+
+<pre><code>    $object-&gt;some_method( &quot;some_value&quot; );
+
+    my $callback = sub {
+        my $self    = shift; # the object
+        my $meth    = shift; # &quot;some_method&quot;
+        my $val     = shift; # [&quot;some_value&quot;]
+                             # could be undef -- check &#39;exists&#39;;
+                             # if scalar @$val is empty, it was a &#39;get&#39;
+
+        # your code here
+
+        return $new_val;     # the value you want to be set/returned
+    }</code></pre>
+
+<p>To access the values stored in the object, circumventing the callback structure, you should use the <code>___get</code> and <code>___set</code> methods documented further down.</p>
+
+<h2 id="bool-self-can-METHOD_NAME">$bool = $self-&gt;can( METHOD_NAME )</h2>
+
+<p>This method overrides <code>UNIVERAL::can</code> in order to provide coderefs to accessors which are loaded on demand. It will behave just like <code>UNIVERSAL::can</code> where it can -- returning a class method if it exists, or a closure pointing to a valid accessor of this particular object.</p>
+
+<p>You can use it as follows:</p>
+
+<pre><code>    $sub = $object-&gt;can(&#39;some_accessor&#39;);   # retrieve the coderef
+    $sub-&gt;(&#39;foo&#39;);                          # &#39;some_accessor&#39; now set
+                                            # to &#39;foo&#39; for $object
+    $foo = $sub-&gt;();                        # retrieve the contents
+                                            # of &#39;some_accessor&#39;</code></pre>
+
+<p>See the <code>SYNOPSIS</code> for more examples.</p>
+
+<h2 id="val-self-___get-METHOD_NAME">$val = $self-&gt;___get( METHOD_NAME );</h2>
+
+<p>Method to directly access the value of the given accessor in the object. It circumvents all calls to allow checks, callbacks, etc.</p>
+
+<p>Use only if you <code>Know What You Are Doing</code>! General usage for this functionality would be in your own custom callbacks.</p>
+
+<h2 id="bool-self-___set-METHOD_NAME-VALUE">$bool = $self-&gt;___set( METHOD_NAME =&gt; VALUE );</h2>
+
+<p>Method to directly set the value of the given accessor in the object. It circumvents all calls to allow checks, callbacks, etc.</p>
+
+<p>Use only if you <code>Know What You Are Doing</code>! General usage for this functionality would be in your own custom callbacks.</p>
+
+<h2 id="bool-self-___alias-ALIAS-METHOD">$bool = $self-&gt;___alias( ALIAS =&gt; METHOD );</h2>
+
+<p>Method to directly alias one accessor to another for this object. It circumvents all sanity checks, etc.</p>
+
+<p>Use only if you <code>Know What You Are Doing</code>!</p>
+
+<h1 id="LVALUE-ACCESSORS">LVALUE ACCESSORS</h1>
+
+<p><code>Object::Accessor</code> supports <code>lvalue</code> attributes as well. To enable these, you should create your objects in the designated namespace, <code>Object::Accessor::Lvalue</code>. For example:</p>
+
+<pre><code>    my $obj = Object::Accessor::Lvalue-&gt;new(&#39;foo&#39;);
+    $obj-&gt;foo += 1;
+    print $obj-&gt;foo;</code></pre>
+
+<p>will actually print <code>1</code> and work as expected. Since this is an optional feature, that&#39;s not desirable in all cases, we require you to explicitly use the <code>Object::Accessor::Lvalue</code> class.</p>
+
+<p>Doing the same on the standard <code>Object</code>&gt;Accessor&gt; class would generate the following code &amp; errors:</p>
+
+<pre><code>    my $obj = Object::Accessor-&gt;new(&#39;foo&#39;);
+    $obj-&gt;foo += 1;
+
+    Can&#39;t modify non-lvalue subroutine call</code></pre>
+
+<p>Note that <code>lvalue</code> support on <code>AUTOLOAD</code> routines is a <code>perl 5.8.x</code> feature. See perldoc <a href="file:/c|/perl/html/pod/perl58delta.html">perl58delta</a> for details.</p>
+
+<h2 id="CAVEATS">CAVEATS</h2>
+
+<ul>
+
+<li><p>Allow handlers</p>
+
+<p>Due to the nature of <code>lvalue subs</code>, we never get access to the value you are assigning, so we can not check it against your allow handler. Allow handlers are therefor unsupported under <code>lvalue</code> conditions.</p>
+
+<p>See <code>perldoc perlsub</code> for details.</p>
+
+</li>
+<li><p>Callbacks</p>
+
+<p>Due to the nature of <code>lvalue subs</code>, we never get access to the value you are assigning, so we can not check provide this value to your callback. Furthermore, we can not distinguish between a <code>get</code> and a <code>set</code> call. Callbacks are therefor unsupported under <code>lvalue</code> conditions.</p>
+
+<p>See <code>perldoc perlsub</code> for details.</p>
+
+</li>
+</ul>
+
+<h1 id="GLOBAL-VARIABLES">GLOBAL VARIABLES</h1>
+
+<h2 id="Object::Accessor::FATAL">$Object::Accessor::FATAL</h2>
+
+<p>Set this variable to true to make all attempted access to non-existent accessors be fatal. This defaults to <code>false</code>.</p>
+
+<h2 id="Object::Accessor::DEBUG">$Object::Accessor::DEBUG</h2>
+
+<p>Set this variable to enable debugging output. This defaults to <code>false</code>.</p>
+
+<h1 id="TODO">TODO</h1>
+
+<h2 id="Create-read-only-accessors">Create read-only accessors</h2>
+
+<p>Currently all accessors are read/write for everyone. Perhaps a future release should make it possible to have read-only accessors as well.</p>
+
+<h1 id="CAVEATS1">CAVEATS</h1>
+
+<p>If you use codereferences for your allow handlers, you will not be able to freeze the data structures using <code>Storable</code>.</p>
+
+<p>Due to a bug in storable (until at least version 2.15), <code>qr//</code> compiled regexes also don&#39;t de-serialize properly. Although this bug has been reported, you should be aware of this issue when serializing your objects.</p>
+
+<p>You can track the bug here:</p>
+
+<pre><code>    http://rt.cpan.org/Ticket/Display.html?id=1827</code></pre>
+
+<h1 id="BUG-REPORTS">BUG REPORTS</h1>
+
+<p>Please report bugs or other issues to &lt;bug-object-accessor@rt.cpan.org&gt;.</p>
+
+<h1 id="AUTHOR">AUTHOR</h1>
+
+<p>This module by Jos Boumans &lt;kane@cpan.org&gt;.</p>
+
+<h1 id="COPYRIGHT">COPYRIGHT</h1>
+
+<p>This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.</p>
+
+<table border="0" width="100%" cellspacing="0" cellpadding="3">
+<tr><td class="_podblock_" style="background-color: #cccccc" valign="middle">
+<big><strong><span class="_podblock_">&nbsp;</span></strong></big>
+</td></tr>
+</table>
+
+</body>
+
+</html>
+
+
